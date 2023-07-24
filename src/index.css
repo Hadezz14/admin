@@ -15,9 +15,12 @@ body {
 }
 
 .logo {
-  height: 32px;
-  margin: 16px;
-  background: rgba(255, 255, 255, 0.3);
+  height: 8rem;
+}
+.logo>img {
+  width: 12.5rem;
+  height: 10rem;
+  margin-left: 0.4rem;
 }
 .ant-layout {
   min-height: 100vh;
@@ -43,11 +46,6 @@ body {
 }
 .ant-layout-sider-collapsed .lg-logo {
   display: none;
-}
-.logo {
-  background-color: #ffd333;
-  margin: 0;
-  height: 64px;
 }
 main {
   height: 85vh;
@@ -75,4 +73,18 @@ main::-webkit-scrollbar {
 .error {
   color: red;
   font-size: 12px;
+}
+
+.see-statistics-link {
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.see-statistics-link:hover {
+  opacity: 0.7;
+  color: rgb(95, 195, 238);
+}
+
+.logo-image {
+  transition: opacity 0.7s ease-in-out;
 }

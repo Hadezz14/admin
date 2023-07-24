@@ -1,96 +1,87 @@
-import React, { useEffect, useState } from "react";
-import { Table } from "antd";
-import { BiEdit } from "react-icons/bi";
-import { AiFillDelete } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import {
-  deleteAProductCategory,
-  getCategories,
-  resetState,
-} from "../features/pcategory/pcategorySlice";
-import CustomModal from "../components/CustomModal";
+import * as React from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteAProductCategory, getCategories, updateAProductCategory } from '../features/pcategory/pcategorySlice';
+import { Categorycolumns } from '../Datasource.js';
 
-const columns = [
-  {
-    title: "SNo",
-    dataIndex: "key",
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    sorter: (a, b) => a.name.length - b.name.length,
-  },
-
-  {
-    title: "Action",
-    dataIndex: "action",
-  },
-];
-
-const Categorylist = () => {
-  const [open, setOpen] = useState(false);
-  const [pCatId, setpCatId] = useState("");
-  const showModal = (e) => {
-    setOpen(true);
-    setpCatId(e);
-  };
-
-  const hideModal = () => {
-    setOpen(false);
-  };
+export default function DataTable() {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(resetState());
+  const pCategories = useSelector((state) => state.pCategory.pCategories);
+  const isLoading = useSelector((state) => state.pCategory.isLoading);
+
+  const [isEditFormOpen, setIsEditFormOpen] = React.useState(false);
+  const [categoryData, setCategoryData] = React.useState(null);
+
+  React.useEffect(() => {
     dispatch(getCategories());
-  }, []);
-  const pCatStat = useSelector((state) => state.pCategory.pCategories);
-  const data1 = [];
-  for (let i = 0; i < pCatStat.length; i++) {
-    data1.push({
-      key: i + 1,
-      name: pCatStat[i].title,
-      action: (
-        <>
-          <Link
-            to={`/admin/category/${pCatStat[i]._id}`}
-            className=" fs-3 text-danger"
-          >
-            <BiEdit />
-          </Link>
-          <button
-            className="ms-3 fs-3 text-danger bg-transparent border-0"
-            onClick={() => showModal(pCatStat[i]._id)}
-          >
-            <AiFillDelete />
-          </button>
-        </>
-      ),
-    });
-  }
-  const deleteCategory = (e) => {
-    dispatch(deleteAProductCategory(e));
-    setOpen(false);
-    setTimeout(() => {
-      dispatch(getCategories());
-    }, 100);
+  }, [dispatch]);
+
+  const handleDeleteCategory = (_id) => {
+    dispatch(deleteAProductCategory(_id));
+
   };
+
+  const handleEditCategory = (category) => {
+    setCategoryData(category);
+    setIsEditFormOpen(true);
+  };
+
+  const handleUpdateCategory = (_id) => {
+    dispatch(updateAProductCategory(_id));
+    setIsEditFormOpen(false);
+  };
+  const handleCloseForm = () => {
+    setIsEditFormOpen(false);
+  };
+
+  const formattedCategories = pCategories.map((category) => ({
+    id: category._id, 
+    ...category,
+  }));
+
+  const actionColumn = [
+    {
+      field: 'action',
+      headerName: 'Action',
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <div className="cellAction">
+            <button type="button" class="btn btn-success" onClick={() => handleEditCategory(params.id)}>Edit</button>
+             <button type="button" class="btn btn-danger"  onClick={() => handleDeleteCategory(params.id)}>Delete</button>
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
-    <div>
-      <h3 className="mb-4 title">Product Categories</h3>
-      <div>
-        <Table columns={columns} dataSource={data1} />
-      </div>
-      <CustomModal
-        hideModal={hideModal}
-        open={open}
-        performAction={() => {
-          deleteCategory(pCatId);
-        }}
-        title="Are you sure you want to delete this Product Category?"
+    <div style={{ height: 400, width: '100%' }}>
+      <DataGrid
+        rows={formattedCategories}
+        columns={(Categorycolumns || []).concat(actionColumn)}
+        loading={isLoading}
+        pagination
+        pageSize={5}
+        pageSizeOptions={[5, 10]}
+        checkboxSelection
       />
+      {isEditFormOpen && (
+        <div className="edit-form">
+          {categoryData && (
+            <>
+              <input
+                type="text"
+                value={categoryData.name}
+                onChange={(e) => setCategoryData({ ...categoryData, name: e.target.value })}
+              />
+              <button type="button" onClick={handleUpdateCategory}>Update</button>
+              <button type="button" onClick={handleCloseForm}>Close</button>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
-};
+}
 
-export default Categorylist;
