@@ -1,81 +1,138 @@
-import React, { useEffect } from "react";
-import { Table } from "antd";
-import { BiEdit } from "react-icons/bi";
-import { AiFillDelete } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "../features/product/productSlice";
-import { Link } from "react-router-dom";
-const columns = [
-  {
-    title: "SNo",
-    dataIndex: "key",
-  },
-  {
-    title: "Title",
-    dataIndex: "title",
-    sorter: (a, b) => a.title.length - b.title.length,
-  },
-  {
-    title: "Brand",
-    dataIndex: "brand",
-    sorter: (a, b) => a.brand.length - b.brand.length,
-  },
-  {
-    title: "Category",
-    dataIndex: "category",
-    sorter: (a, b) => a.category.length - b.category.length,
-  },
-  {
-    title: "Color",
-    dataIndex: "color",
-  },
-  {
-    title: "Price",
-    dataIndex: "price",
-    sorter: (a, b) => a.price - b.price,
-  },
-  {
-    title: "Action",
-    dataIndex: "action",
-  },
-];
+import React, { useState } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteProduct, getProducts, updateProduct } from '../features/product/productSlice';
+import { Productcolumns } from '../Datasource';
 
-const Productlist = () => {
+const DataTable = () => {
   const dispatch = useDispatch();
-  useEffect(() => {
+  const products = useSelector((state) => state.product.products);
+  const isLoading = useSelector((state) => state.product.isLoading);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  React.useEffect(() => {
     dispatch(getProducts());
-  }, []);
-  const productState = useSelector((state) => state.product.products);
-  const data1 = [];
-  for (let i = 0; i < productState.length; i++) {
-    data1.push({
-      key: i + 1,
-      title: productState[i].title,
-      brand: productState[i].brand,
-      category: productState[i].category,
-      color: productState[i].color,
-      price: `${productState[i].price}`,
-      action: (
-        <>
-          <Link to="/" className=" fs-3 text-danger">
-            <BiEdit />
-          </Link>
-          <Link className="ms-3 fs-3 text-danger" to="/">
-            <AiFillDelete />
-          </Link>
-        </>
-      ),
-    });
-  }
-  console.log(data1);
+  }, [dispatch]);
+
+  const handleDeleteProduct = (_id) => {
+    dispatch(deleteProduct(_id));
+  };
+
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
+  };
+
+  const handleFormClose = () => {
+    setSelectedProduct(null);
+  };
+
+  const handleUpdateProduct = (updatedProduct) => {
+    dispatch(updateProduct(updatedProduct));
+    handleFormClose();
+  };
+
+  const formattedProducts = products.map((product) => ({
+    id: product._id,
+    ...product,
+  }));
+
+  const actionColumn = [
+    {
+      field: 'action',
+      headerName: 'Action',
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <div className="cellAction">
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={() => handleEditProduct(params)}
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={() => handleDeleteProduct(params.id)}
+            >
+              Delete
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
+
+  return (
+    <>
+      <div style={{ height: 400, width: '100%' }}>
+        <DataGrid
+          rows={formattedProducts}
+          columns={(Productcolumns || []).concat(actionColumn)}
+          loading={isLoading}
+          pagination
+          pageSize={5}
+          checkboxSelection
+        />
+      </div>
+      {selectedProduct && (
+        <EditProductForm
+          product={selectedProduct}
+          onClose={handleFormClose}
+          onUpdate={handleUpdateProduct}
+        />
+      )}
+    </>
+  );
+};
+
+const EditProductForm = ({ product, onClose, onUpdate }) => {
+  const [title, setTitle] = useState(product.title);
+  const [color, setColor] = useState(product.color);
+  const [quantity, setQuantity] = useState(product.quantity);
+  const [price, setPrice] = useState(product.price);
+
+  const handleUpdateProduct = () => {
+    const updatedProduct = {
+      id: product.id,
+      title,
+      color,
+      quantity,
+      price,
+    };
+    onUpdate(updatedProduct);
+  };
+
   return (
     <div>
-      <h3 className="mb-4 title">Products</h3>
-      <div>
-        <Table columns={columns} dataSource={data1} />
-      </div>
+      <h2>Edit Product</h2>
+      <form>
+        <div>
+          <label>Title:</label>
+          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+        </div>
+        <div>
+          <label>Color:</label>
+          <input type="text" value={color} onChange={(e) => setColor(e.target.value)} />
+        </div>
+        <div>
+          <label>Quantity:</label>
+          <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+        </div>
+        <div>
+          <label>Price:</label>
+          <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+        </div>
+        <button type="button" onClick={handleUpdateProduct}>
+          Update
+        </button>
+        <button type="button" onClick={onClose}>
+          Close
+        </button>
+      </form>
     </div>
   );
 };
 
-export default Productlist;
+export default DataTable;

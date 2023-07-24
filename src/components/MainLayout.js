@@ -9,15 +9,15 @@ import {
 import { RiCouponLine } from "react-icons/ri";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { ImBlog } from "react-icons/im";
-import { IoIosNotifications } from "react-icons/io";
-import { FaClipboardList, FaBloggerB } from "react-icons/fa";
-import { SiBrandfolder } from "react-icons/si";
+import { FaClipboardList, FaCheckCircle } from "react-icons/fa";
 import { BiCategoryAlt } from "react-icons/bi";
 import { Layout, Menu, theme } from "antd";
 import { useNavigate } from "react-router-dom";
+import logo from '../imgs/vyamLogo.png';
+import logo2 from '../imgs/VyamHeadLogo.png'
+
 const { Header, Sider, Content } = Layout;
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -28,12 +28,13 @@ const MainLayout = () => {
   return (
     <Layout /* onContextMenu={(e) => e.preventDefault()} */>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo">
-          <h2 className="text-white fs-5 text-center py-3 mb-0">
-            <span className="sm-logo">Vyam</span>
-            <span className="lg-logo">Vyam</span>
-          </h2>
-        </div>
+      <div className="logo">
+        {collapsed ? (
+          <img src={logo2} alt="" style={{  width: '95%', height: '56%', marginTop: '2.4rem'}}/>
+        ) : (
+          <img src={logo} alt="" />
+        )}
+      </div>
         <Menu
           theme="dark"
           mode="inline"
@@ -80,16 +81,6 @@ const MainLayout = () => {
                   key: "list-category",
                   icon: <BiCategoryAlt className="fs-4" />,
                   label: "Category List",
-                },
-                {
-                  key: "color",
-                  icon: <AiOutlineBgColors className="fs-4" />,
-                  label: "Color",
-                },
-                {
-                  key: "list-color",
-                  icon: <AiOutlineBgColors className="fs-4" />,
-                  label: "Color List",
                 },
               ],
             },

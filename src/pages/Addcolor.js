@@ -69,9 +69,6 @@ const Addcolor = () => {
   });
   return (
     <div>
-      <h3 className="mb-4 title">
-        {getColorId !== undefined ? "Edit" : "Add"} Color
-      </h3>
       <div>
         <form action="" onSubmit={formik.handleSubmit}>
           <CustomInput
@@ -86,7 +83,7 @@ const Addcolor = () => {
             {formik.touched.title && formik.errors.title}
           </div>
           <button
-            className="btn btn-success border-0 rounded-3 my-5"
+            className="btn btn-success border-0 rounded-3 my-1"
             type="submit"
           >
             {getColorId !== undefined ? "Edit" : "Add"} Color
