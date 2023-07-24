@@ -25,23 +25,19 @@ const deleteProductCategory = async (id) => {
   return response.data;
 };
 
-const updateProductCategory = async (categoryID) => {
+
+const updateProductCategory = async (category) => {
   try {
-    // Make sure category.pCatData is not undefined before accessing its properties
-    if (categoryID && categoryID.pCatData && categoryID.pCatData.title) {
-      const response = await axios.put(
-        `${base_url}category/${categoryID}`,
-        { title: categoryID.pCatData.title },
-        config
-      );
-      return response.data;
-    } else {
-      // Handle the case when category or category.pCatData is undefined
-      throw new Error("Invalid category data");
-    }
+    const response = await axios.put(
+      `${base_url}category/${category.id}`,
+      { title: category.title },
+      config
+    );
+    return response.data;
   } catch (error) {
     throw new Error(error);
   }
+  
 };
 const pCategoryService = {
   getProductCategories,

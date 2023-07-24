@@ -11,24 +11,33 @@ export default function DataTable() {
 
   const [isEditFormOpen, setIsEditFormOpen] = React.useState(false);
   const [categoryData, setCategoryData] = React.useState(null);
+  
 
   React.useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
 
   const handleDeleteCategory = (_id) => {
+    
     dispatch(deleteAProductCategory(_id));
 
   };
 
+  
   const handleEditCategory = (category) => {
     setCategoryData(category);
     setIsEditFormOpen(true);
   };
 
-  const handleUpdateCategory = (_id) => {
-    dispatch(updateAProductCategory(_id));
-    setIsEditFormOpen(false);
+  const handleUpdateCategory = () => {
+    
+    if (categoryData && categoryData.title){
+      dispatch(updateAProductCategory(categoryData));
+      setIsEditFormOpen(false);  
+    }else{
+      console.log("CD not found")
+    }
+    
   };
   const handleCloseForm = () => {
     setIsEditFormOpen(false);
@@ -47,7 +56,7 @@ export default function DataTable() {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <button type="button" class="btn btn-success" onClick={() => handleEditCategory(params.id)}>Edit</button>
+            <button type="button" class="btn btn-success" onClick={() => handleEditCategory(params)}>Edit</button>
              <button type="button" class="btn btn-danger"  onClick={() => handleDeleteCategory(params.id)}>Delete</button>
           </div>
         );
@@ -72,8 +81,8 @@ export default function DataTable() {
             <>
               <input
                 type="text"
-                value={categoryData.name}
-                onChange={(e) => setCategoryData({ ...categoryData, name: e.target.value })}
+                value={categoryData.title}
+                onChange={(e) => setCategoryData({ ...categoryData, title: e.target.value })}
               />
               <button type="button" onClick={handleUpdateCategory}>Update</button>
               <button type="button" onClick={handleCloseForm}>Close</button>
