@@ -1,8 +1,13 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteAProductCategory, getCategories, updateAProductCategory } from '../features/pcategory/pcategorySlice';
 import { Categorycolumns } from '../Datasource.js';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 
 export default function DataTable() {
   const dispatch = useDispatch();
@@ -11,40 +16,35 @@ export default function DataTable() {
 
   const [isEditFormOpen, setIsEditFormOpen] = React.useState(false);
   const [categoryData, setCategoryData] = React.useState(null);
-  
 
   React.useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
 
   const handleDeleteCategory = (_id) => {
-    
     dispatch(deleteAProductCategory(_id));
-
   };
 
-  
   const handleEditCategory = (category) => {
     setCategoryData(category);
     setIsEditFormOpen(true);
   };
 
   const handleUpdateCategory = () => {
-    
-    if (categoryData && categoryData.title){
+    if (categoryData && categoryData.title) {
       dispatch(updateAProductCategory(categoryData));
-      setIsEditFormOpen(false);  
-    }else{
-      console.log("CD not found")
+      setIsEditFormOpen(false);
+    } else {
+      console.log('CD not found');
     }
-    
   };
+
   const handleCloseForm = () => {
     setIsEditFormOpen(false);
   };
 
   const formattedCategories = pCategories.map((category) => ({
-    id: category._id, 
+    id: category._id,
     ...category,
   }));
 
@@ -56,8 +56,20 @@ export default function DataTable() {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <button type="button" class="btn btn-success" onClick={() => handleEditCategory(params)}>Edit</button>
-             <button type="button" class="btn btn-danger"  onClick={() => handleDeleteCategory(params.id)}>Delete</button>
+            <button
+              type="button"
+              class="btn btn-success"
+              onClick={() => handleEditCategory(params)}
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              onClick={() => handleDeleteCategory(params.id)}
+            >
+              Delete
+            </button>
           </div>
         );
       },
@@ -75,22 +87,23 @@ export default function DataTable() {
         pageSizeOptions={[5, 10]}
         checkboxSelection
       />
-      {isEditFormOpen && (
-        <div className="edit-form">
-          {categoryData && (
-            <>
-              <input
-                type="text"
-                value={categoryData.title}
-                onChange={(e) => setCategoryData({ ...categoryData, title: e.target.value })}
-              />
-              <button type="button" onClick={handleUpdateCategory}>Update</button>
-              <button type="button" onClick={handleCloseForm}>Close</button>
-            </>
-          )}
-        </div>
+      {categoryData && (
+        <Dialog open={isEditFormOpen} onClose={handleCloseForm}>
+          <DialogTitle>Edit Category</DialogTitle>
+          <DialogContent>
+            <label>Category Title:</label>
+            <input
+              type="text"
+              value={categoryData.title}
+              onChange={(e) => setCategoryData({ ...categoryData, title: e.target.value })}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseForm}>Cancel</Button>
+            <Button onClick={handleUpdateCategory}>Update</Button>
+          </DialogActions>
+        </Dialog>
       )}
     </div>
   );
 }
-

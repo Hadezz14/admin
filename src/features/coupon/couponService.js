@@ -13,18 +13,23 @@ const createCoupons = async (coupon) => {
   return response.data;
 };
 const updateCoupon = async (coupon) => {
-  const response = await axios.put(
-    `${base_url}coupon/${coupon.id}`,
-    {
-      name: coupon.couponData.name,
-      expiry: coupon.couponData.expiry,
-      discount: coupon.couponData.discount,
-    },
-    config
-  );
-
-  return response.data;
+  try {
+    const response = await axios.put(
+      `${base_url}coupon/${coupon.id}`,
+      {
+        name: coupon.name,
+        expiry: coupon.expiry,
+        discount: coupon.discount,
+      },
+      config
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+  
 };
+
 const getCoupon = async (id) => {
   const response = await axios.get(`${base_url}coupon/${id}`, config);
 

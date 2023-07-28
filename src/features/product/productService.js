@@ -13,10 +13,24 @@ const createProduct = async (product) => {
   return response.data;
 };
 
-const updateProduct = async (id, productData) => {
-  const response = await axios.put(`${base_url}product/${id}`, productData, config);
-  return response.data;
+const updateProduct = async (product) => {
+  try {
+    const response = await axios.put(
+      `${base_url}product/${product.id}`,
+      {
+        title: product.title,
+        color: product.color,
+        quantity: product.quantity,
+        price: product.price,
+      },
+      config
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
+
 
 const deleteProduct = async (id) => {
   const response = await axios.delete(`${base_url}product/${id}`, config);

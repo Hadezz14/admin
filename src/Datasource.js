@@ -67,7 +67,6 @@ export const rows = [
  export const Productcolumns = [
     { field: 'id', headerName: 'SN', width: 20 },
     { field: 'title', headerName: ' Title', width: 130 },
-    { field: 'brand', headerName: 'Brand', width: 100 },
     { field: 'color', headerName: 'Color', width: 90 },
     { field: 'quantity', headerName: 'Quantity', width: 100 },
     { field: 'price', headerName: 'Price', width: 100 },

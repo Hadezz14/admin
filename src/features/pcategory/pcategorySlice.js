@@ -23,9 +23,9 @@ export const createCategory = createAsyncThunk(
 );
 export const updateAProductCategory = createAsyncThunk(
   "productCategory/update-category",
-  async (category, thunkAPI) => {
+  async (categoryID, thunkAPI) => {
     try {
-      return await pCategoryService.updateProductCategory(category);
+      return await pCategoryService.updateProductCategory(categoryID);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
