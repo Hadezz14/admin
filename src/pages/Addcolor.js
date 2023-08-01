@@ -14,59 +14,91 @@ import {
 let schema = yup.object().shape({
   title: yup.string().required("Color is Required"),
 });
-const Addcolor = () => {
+const Addcolor = ({isSuccess,isError}) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const getColorId = location.pathname.split("/")[3];
   const newColor = useSelector((state) => state.color);
   const {
-    isSuccess,
-    isError,
     isLoading,
     createdColor,
     updatedColor,
     colorName,
   } = newColor;
   useEffect(() => {
+    console.log("Fetching color data")
     if (getColorId !== undefined) {
       dispatch(getAColor(getColorId));
-    } else {
+    } 
+    else {
+      // dispatch(resetState());
+    }
+    if(!location.pathname.includes("/add-color")){
       dispatch(resetState());
     }
-  }, [getColorId]);
+  }, [getColorId, dispatch,location]);
   useEffect(() => {
     if (isSuccess && createdColor) {
       toast.success("Color Added Successfullly!");
     }
     if (isSuccess && updatedColor) {
       toast.success("Color Updated Successfullly!");
-      navigate("/admin/list-color");
+      // navigate("/admin/list-color");
     }
     if (isError) {
       toast.error("Something Went Wrong!");
     }
   }, [isSuccess, isError, isLoading, createdColor]);
+  // const formik = useFormik({
+  //   enableReinitialize: true,
+  //   initialValues: {
+  //     title: colorName || "",
+  //   },
+  //   validationSchema: schema,
+  //   onSubmit: async (values) => {
+  //     if (getColorId !== undefined) {
+  //       const data = { id: getColorId, colorData: values };
+  //       dispatch(updateAColor(data));
+        
+  //     } else {
+  //       dispatch(createColor(values));
+  //       formik.resetForm();
+  //       setTimeout(() => {
+  //         console.log("error")
+  //       }, 300);
+  //     }
+  //   },
+  // });
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       title: colorName || "",
     },
     validationSchema: schema,
-    onSubmit: (values) => {
-      if (getColorId !== undefined) {
-        const data = { id: getColorId, colorData: values };
-        dispatch(updateAColor(data));
-        dispatch(resetState());
-      } else {
-        dispatch(createColor(values));
-        formik.resetForm();
-        setTimeout(() => {
-          dispatch(resetState());
-        }, 300);
+    onSubmit:  (values) => {
+      console.log("Form summitted with values: ", values)
+      try {
+        if (getColorId !== undefined) {
+          const data = { id: getColorId, colorData: values };
+          dispatch(updateAColor(data));
+        } else {
+          dispatch(createColor(values));
+          formik.resetForm();
+        }
+        // Display success toast message for adding/editing color
+        toast.success(
+          getColorId !== undefined
+            ? "Color Updated Successfully!"
+            : "Color Added Successfully!"
+        );
+      } catch (error) {
+        // Handle API call errors
+        toast.error("Something Went Wrong!");
       }
     },
   });
+
   return (
     <div>
       <div>
@@ -78,6 +110,7 @@ const Addcolor = () => {
             onBlr={formik.handleBlur("title")}
             val={formik.values.title}
             id="color"
+            
           />
           <div className="error">
             {formik.touched.title && formik.errors.title}

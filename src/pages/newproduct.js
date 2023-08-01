@@ -9,12 +9,12 @@ import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { getBrands } from "../features/brand/brandSlice";
 import { getCategories } from "../features/pcategory/pcategorySlice";
-import { getColors } from "../features/color/colorSlice";
+import { getColors,createColor  } from "../features/color/colorSlice";
 import { Select } from "antd";
 import Dropzone from "react-dropzone";
 import { delImg, uploadImg } from "../features/upload/uploadSlice";
 import { createProducts, resetState } from "../features/product/productSlice";
-import Addcolor from "./Addcolor";
+import {ChromePicker} from "react-color";
 import Colorlist from "./Colotlist";
 let schema = yup.object().shape({
   title: yup.string().required("Title is Required"),
@@ -26,15 +26,23 @@ let schema = yup.object().shape({
   color: yup
     .array()
     .min(1, "Pick at least one color")
-    .required("Color is Required"),
+    .default(""),
   quantity: yup.number().required("Quantity is Required"),
 });
 
-const Addproduct = () => {
+const Newproduct = () => {
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [color, setColor] = useState([]);
+
   const [images, setImages] = useState([]);
+  
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const toggleColorPicker = () =>{
+    setShowColorPicker((prevState) => !prevState);
+  }
+
 
   useEffect(() => {
     dispatch(getBrands());
@@ -71,16 +79,10 @@ const Addproduct = () => {
     });
   });
 
-  // useEffect(() => {
-  //   formik.values.color = color ? color : " ";
-  //   formik.values.images = img;
-  // }, [color, img]);
-
   useEffect(() => {
-    formik.setFieldValue("color", color.map((c) => c.value));
-    formik.setFieldValue("images", img);
+    formik.values.color = color || [];
+    formik.values.images = img;
   }, [color, img]);
-  
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -89,23 +91,28 @@ const Addproduct = () => {
       brand: "",
       category: "",
       tags: "",
-      color: "",
+      color: [],
       quantity: "",
       images: "",
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      dispatch(createProducts(values));
+        if(values.color.length === 0){
+            formik.setFieldError('color','Pick at least on color');
+        }
+        else{
+            dispatch(createProducts(values));
       formik.resetForm();
-      setColor(null);
-      // setTimeout(() => {
-      //   dispatch(resetState());
-      // }, 3000);
+      formik.setFieldValue("color",[])
+      setTimeout(() => {
+        dispatch(resetState());
+      }, 3000);
+    }
+      
     },
   });
-  const handleColors = (e) => {
-    setColor(e);
-    console.log(color);
+  const handleColors = (value) => {
+    formik.setFieldValue("color",[value]);
   };
   return (
     <div>
@@ -156,14 +163,17 @@ const Addproduct = () => {
             className="form-control py-3 mb-3"
             id=""
           >
-            <option value="">Select Brand</option>
-            {brandState.map((i, j) => {
+            <option value="" disabled>
+              Select Category
+            </option>
+            <option value="Vaym">Vyam</option>
+            {/* {brandState.map((i, j) => {
               return (
                 <option key={j} value={i.title}>
                   {i.title}
                 </option>
               );
-            })}
+            })} */}
           </select>
           <div className="error">
             {formik.touched.brand && formik.errors.brand}
@@ -206,8 +216,56 @@ const Addproduct = () => {
           <div className="error">
             {formik.touched.tags && formik.errors.tags}
           </div> */}
-          <Addcolor isSuccess={isSuccess} isError={isError} />
-          <Colorlist/>
+           {/* Add the color form */}
+           <div>
+            <CustomInput
+              type="text"
+              label="Enter Color"
+              name="color"
+            //   onChng={(value) => {
+            //     setSelectedColor(value); // Update the selected color value
+            //     formik.setFieldValue("color", [value]); // Update the formik field value
+            //   }}
+                onChng={handleColors}
+              onBlr={formik.handleBlur("color")}
+              val={formik.values.color[0]}
+            />
+            <div className="error">{formik.touched.color && formik.errors.color}</div>
+            <button
+              className="btn btn-primary rounded-3 my-1"
+              type="button"
+            
+              onClick={toggleColorPicker}
+            >
+              {showColorPicker ? "Close Color Picker" : "Open Color Picker"}
+            </button>
+            {showColorPicker &&(
+                <ChromePicker
+                color={formik.values.color[0]}
+                onChange={(updatedColor) => {
+                  const { hex } = updatedColor;
+                //   setSelectedColor(hex);
+                //   formik.setFieldValue("color", [hex]);
+                    handleColors(hex);
+                }}
+              />
+            )}
+            {/* <button
+    className="btn btn-primary rounded-3 my-1"
+    type="button"
+    onClick={() => {
+      if (selectedColor.trim() !== "") {
+        dispatch(createColor({ title: selectedColor}));
+        setSelectedColor("");
+      }
+    }}
+  >
+    Add Color
+  </button> */}
+ </div>
+          
+
+          {/* <Colorlist/> */}
           <CustomInput
             type="number"
             label="Enter Product Quantity"
@@ -262,4 +320,4 @@ const Addproduct = () => {
   );
 };
 
-export default Addproduct;
+export default Newproduct;

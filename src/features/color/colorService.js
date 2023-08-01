@@ -7,11 +7,19 @@ const getColors = async () => {
 
   return response.data;
 };
-const createColor = async (color) => {
-  const response = await axios.post(`${base_url}color/`, color, config);
+// const createColor = async (color) => {
+//   const response = await axios.post(`${base_url}color/`, color, config);
 
-  return response.data;
-};
+//   return response.data;
+// };
+export const createColor = async (color) => {
+  try {
+    const response = await axios.post(`${base_url}color/`, color, config);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 const updateColor = async (color) => {
   const response = await axios.put(
