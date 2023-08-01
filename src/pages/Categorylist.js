@@ -91,12 +91,14 @@ export default function DataTable() {
         <Dialog open={isEditFormOpen} onClose={handleCloseForm}>
           <DialogTitle>Edit Category</DialogTitle>
           <DialogContent>
+          <form className="form-container">
             <label>Category Title:</label>
             <input
               type="text"
               value={categoryData.title}
               onChange={(e) => setCategoryData({ ...categoryData, title: e.target.value })}
             />
+            </form>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseForm}>Cancel</Button>

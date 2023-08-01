@@ -17,6 +17,9 @@ const DataTable = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
+  const [editedField, setEditedField] = useState({ id: null, field: null });
+
+
   React.useEffect(() => {
     dispatch(getProducts());
   }, [dispatch]);
@@ -26,22 +29,38 @@ const DataTable = () => {
   };
 
   const handleEditProduct = (product) => {
-    setSelectedProduct(product);
+    setSelectedProduct(null); // Clear the selected product
+    setEditedField({ id: product._id, field: null }); // Store the ID of the product to be edited
     setIsEditFormOpen(true);
   };
+
+  
 
   const handleFormClose = () => {
     setIsEditFormOpen(false);
   };
+  
+  const handleUpdateProduct = () => {
+    // Find the product to be updated based on the selected ID
+    const updatedProduct = products.find((product) => product._id === editedField.id);
 
-  const handleUpdateProduct = (updatedProduct) => {
-    dispatch(updateProduct(updatedProduct));
+    if (updatedProduct && editedField.field) {
+      // Update only the edited field
+      updatedProduct[editedField.field] = selectedProduct[editedField.field];
+      dispatch(updateProduct(updatedProduct));
+    }
+
     setIsEditFormOpen(false);
+    setEditedField({ id: null, field: null }); // Clear the edited field
   };
+
 
   const formattedProducts = products.map((product) => ({
     id: product._id,
-    ...product,
+    title: product.title,
+    color: product.color,
+    quantity: product.quantity,
+    price: product.price,
   }));
 
   const actionColumn = [
@@ -87,30 +106,72 @@ const DataTable = () => {
       <Dialog open={isEditFormOpen} onClose={handleFormClose}>
         <DialogTitle>Edit Product</DialogTitle>
         <DialogContent>
-          {selectedProduct && (
-            <form>
+          {selectedProduct && editedField.id && (
+            <form className="form-container">
               <div>
                 <label>Title:</label>
-                <input type="text" value={selectedProduct.title} onChange={(e) => setSelectedProduct({ ...selectedProduct, title: e.target.value })} />
+                <input
+                  type="text"
+                  value={selectedProduct.title}
+                  onChange={(e) => setSelectedProduct({ ...selectedProduct, title: e.target.value })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setEditedField({ ...editedField, field: 'title' })}
+                >
+                  Save
+                </button>
               </div>
               <div>
                 <label>Color:</label>
-                <input type="text" value={selectedProduct.color} onChange={(e) => setSelectedProduct({ ...selectedProduct, color: e.target.value })} />
+                <input
+                  type="text"
+                  value={selectedProduct.color}
+                  onChange={(e) => setSelectedProduct({ ...selectedProduct, color: e.target.value })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setEditedField({ ...editedField, field: 'color' })}
+                >
+                  Save
+                </button>
               </div>
               <div>
                 <label>Quantity:</label>
-                <input type="number" value={selectedProduct.quantity} onChange={(e) => setSelectedProduct({ ...selectedProduct, quantity: e.target.value })} />
+                <input
+                  type="number"
+                  value={selectedProduct.quantity}
+                  onChange={(e) =>
+                    setSelectedProduct({ ...selectedProduct, quantity: e.target.value })
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => setEditedField({ ...editedField, field: 'quantity' })}
+                >
+                  Save
+                </button>
               </div>
               <div>
                 <label>Price:</label>
-                <input type="number" value={selectedProduct.price} onChange={(e) => setSelectedProduct({ ...selectedProduct, price: e.target.value })} />
+                <input
+                  type="number"
+                  value={selectedProduct.price}
+                  onChange={(e) => setSelectedProduct({ ...selectedProduct, price: e.target.value })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setEditedField({ ...editedField, field: 'price' })}
+                >
+                  Save
+                </button>
               </div>
             </form>
           )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleFormClose}>Cancel</Button>
-          <Button onClick={() => handleUpdateProduct(selectedProduct)}>Update</Button>
+          <Button onClick={handleUpdateProduct}>Update</Button>
         </DialogActions>
       </Dialog>
     </>

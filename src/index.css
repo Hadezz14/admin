@@ -96,44 +96,20 @@ main::-webkit-scrollbar {
   gap: 5px;
 }
 
-/* Add your other styles here */
-
-/* Edit Form Container */
-.edit-form {
+/* Form container */
+.form-container {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Add a gap between all divs */
-  padding: 20px;
-  background-color: #f1f1f1;
+  gap: 10px;
 }
 
-/* Label Styles */
-.edit-form label {
-  font-weight: bold;
-}
-
-/* Input Styles */
-.edit-form input {
+/* Input fields */
+.form-container input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 5px;
 }
 
-/* Button Styles */
-.edit-form button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.edit-form button.cancel {
-  background-color: #ff0000;
-  color: #fff;
-}
-
-.edit-form button.update {
-  background-color: #00ff00;
-  color: #fff;
+/* Buttons */
+.form-container button {
+  margin-right: 10px;
 }

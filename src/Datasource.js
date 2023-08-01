@@ -30,13 +30,47 @@ export const rows = [
 
 
 
- export const orderColumn = [
-    { field: 'id', headerName: 'SN', width: 20 },
-    { field: 'name', headerName: ' Name', width: 130 },
-    { field: 'product', headerName: 'product', width: 130 },
-    { field: 'amount', headerName: 'amount', type:'number', width: 80 },
-    { field: 'date', headerName: 'Date', width: 110 },
-    { field: 'status', headerName: 'Status', width: 110 }
+  export const orderColumn = [
+    {
+      field: 'id', // This field must match the property name in the rows data
+      headerName: 'Order ID', // Header displayed in the DataGrid
+      width: 200, // Width of the column
+    },
+    {
+      field: 'products',
+      headerName: 'Products',
+      width: 300,
+      renderCell: (params) => {
+        // Custom render function for the "Products" column
+        const products = params.row.products.map((product) => {
+          return `${product.count} x ${product.product.title} (${product.color})`;
+        });
+        return <div>{products.join(', ')}</div>;
+      },
+    },
+    {
+      field: 'orderStatus',
+      headerName: 'Order Status',
+      width: 150,
+    },
+    {
+      field: 'orderby',
+      headerName: 'Ordered By',
+      width: 200,
+      valueGetter: (params) => params.row.orderby.username,
+      // The "orderby" field is a reference to the "User" model.
+      // Use "valueGetter" to display the "username" property of the referenced user.
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created At',
+      width: 200,
+      valueFormatter: (params) => {
+        // Format the createdAt timestamp as desired
+        const date = new Date(params.value);
+        return date.toLocaleString();
+      },
+    },
   ];
   export const recntOrders = [
     { field: 'id', headerName: 'SN', width: 20 },

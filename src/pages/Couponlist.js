@@ -95,6 +95,7 @@ const DataTable = () => {
         <Dialog open={isEditFormOpen} onClose={handleCloseForm}>
           <DialogTitle>Edit Coupon</DialogTitle>
           <DialogContent>
+          <form className="form-container">
             <label>Discount Name:</label>
             <input
               type="text"
@@ -113,6 +114,7 @@ const DataTable = () => {
               value={selectedCoupon.expiry}
               onChange={(e) => setSelectedCoupon({ ...selectedCoupon, expiry: e.target.value })}
             />
+            </form>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseForm}>Close</Button>
