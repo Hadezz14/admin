@@ -99,7 +99,7 @@ export const rows = [
   ];
 
  export const Productcolumns = [
-    { field: 'id', headerName: 'SN', width: 20 },
+    { field: 'id', headerName: 'SN', width: 100 },
     { field: 'title', headerName: ' Title', width: 130 },
     { field: 'color', headerName: 'Color', width: 90 },
     { field: 'quantity', headerName: 'Quantity', width: 100 },
