@@ -9,7 +9,6 @@ const uploadImg = async (data) => {
 const deleteImg = async (id) => {
   const response = await axios.delete(
     `${base_url}upload/delete-img/${id}`,
-
     config
   );
   return response.data;

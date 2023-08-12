@@ -20,6 +20,7 @@ import Couponlist from "./pages/Couponlist";
 import AddCoupon from "./pages/AddCoupon";
 import ViewEnq from "./pages/ViewEnq";
 import ViewOrder from "./pages/ViewOrder";
+import Newproduct from "./pages/newproduct";
 function App() {
   return (
     <Router>
@@ -45,7 +46,9 @@ function App() {
           <Route path="category" element={<Addcat />} />
           <Route path="category/:id" element={<Addcat />} />
           <Route path="list-product" element={<Productlist />} />
-          <Route path="product" element={<Addproduct />} />
+          {/* <Route path="product" element={<Addproduct />} /> */}
+          <Route path="product" element={<Newproduct/>} />
+
         </Route>
       </Routes>
     </Router>

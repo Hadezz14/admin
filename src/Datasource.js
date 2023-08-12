@@ -34,7 +34,14 @@ export const rows = [
     {
       field: 'id', // This field must match the property name in the rows data
       headerName: 'Order ID', // Header displayed in the DataGrid
-      width: 200, // Width of the column
+      width: 200,
+      valueGetter: (params) => params.row._id,
+    },
+    {
+      field: 'orderby', // This field must match the property name in the rows data
+      headerName: 'Ordered By', // Header displayed in the DataGrid
+      width: 200,
+      valueGetter: (params) => params.row.user?.firstname + '' + params.row.user?.lastname || "N/A",
     },
     {
       field: 'products',
@@ -42,35 +49,33 @@ export const rows = [
       width: 300,
       renderCell: (params) => {
         // Custom render function for the "Products" column
-        const products = params.row.products.map((product) => {
-          return `${product.count} x ${product.product.title} (${product.color})`;
-        });
-        return <div>{products.join(', ')}</div>;
+        const orderedItems = params.row.orderedItems|| [];
+        const productsString = orderedItems.map((item) =>{
+          const {quantity,product,color} = item;
+          if(product){
+            return `${quantity} x ${product.title} (${color}) `
+          }
+          return "Product Not Available";
+          
+        }).join(',');
+        return <div>{productsString}</div>;
       },
     },
     {
-      field: 'orderStatus',
+      field: 'shipping_address',
+      headerName: 'Address',
+      width: 150,
+    },
+    {
+      field: 'OrderStatus',
       headerName: 'Order Status',
       width: 150,
     },
     {
-      field: 'orderby',
-      headerName: 'Ordered By',
-      width: 200,
-      valueGetter: (params) => params.row.orderby.username,
-      // The "orderby" field is a reference to the "User" model.
-      // Use "valueGetter" to display the "username" property of the referenced user.
-    },
-    {
-      field: 'createdAt',
-      headerName: 'Created At',
-      width: 200,
-      valueFormatter: (params) => {
-        // Format the createdAt timestamp as desired
-        const date = new Date(params.value);
-        return date.toLocaleString();
-      },
-    },
+      field: 'total_amount',
+      headerName: 'Total',
+      width: 100,
+    }
   ];
   export const recntOrders = [
     { field: 'id', headerName: 'SN', width: 20 },

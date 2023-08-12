@@ -51,7 +51,7 @@ export const uploadSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.pay;
       })
       .addCase(delImg.pending, (state) => {
         state.isLoading = true;
@@ -66,7 +66,7 @@ export const uploadSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.payload;
+        state.message = action.error;
       });
   },
 });
