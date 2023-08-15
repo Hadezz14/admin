@@ -56,7 +56,7 @@ const DataTable = () => {
     price: product.price,
   }));
   
-  const actionColumn = [
+    const actionColumn = [
     {
       field: 'action',
       headerName: 'Action',
