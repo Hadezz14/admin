@@ -3,6 +3,15 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteProduct, getProducts, updateProduct } from '../features/product/productSlice';
 import { Productcolumns } from '../Datasource';
+<<<<<<< Updated upstream
+=======
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import '../index.css'
+>>>>>>> Stashed changes
 
 const DataTable = () => {
   const dispatch = useDispatch();
@@ -18,14 +27,24 @@ const DataTable = () => {
     dispatch(deleteProduct(_id));
   };
 
+<<<<<<< Updated upstream
   const handleEditProduct = (product) => {
     setSelectedProduct(product);
+=======
+  const handleEditProduct = (params) => {
+    const editedProduct = products.find((product) => product._id === params.id);
+    console.log(editedProduct)
+
+    setEditedProduct({ ...editedProduct });
+    setIsEditFormOpen(true);
+>>>>>>> Stashed changes
   };
 
   const handleFormClose = () => {
     setSelectedProduct(null);
   };
 
+<<<<<<< Updated upstream
   const handleUpdateProduct = (updatedProduct) => {
     dispatch(updateProduct(updatedProduct));
     handleFormClose();
@@ -34,6 +53,22 @@ const DataTable = () => {
   const formattedProducts = products.map((product) => ({
     id: product._id,
     ...product,
+=======
+  const handleUpdateProduct = () => {
+    const updatedProducts = products.map((product) =>
+      product._id === editedProduct._id ? editedProduct : product
+    );
+    dispatch(updateProduct());
+    setEditedProduct(null);
+    setIsEditFormOpen(false);
+  };
+  const formattedProducts = products.map((product) => ({
+    id: product._id, // Use '_id' as the unique 'id' property for each product
+    title: product.title,
+    color: product.color,
+    quantity: product.quantity,
+    price: product.price,
+>>>>>>> Stashed changes
   }));
 
   const actionColumn = [
@@ -68,14 +103,16 @@ const DataTable = () => {
     <>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
-          rows={formattedProducts}
+          rows={products}
           columns={(Productcolumns || []).concat(actionColumn)}
           loading={isLoading}
           pagination
           pageSize={5}
           checkboxSelection
+          getRowId={(row) => row._id}
         />
       </div>
+<<<<<<< Updated upstream
       {selectedProduct && (
         <EditProductForm
           product={selectedProduct}
@@ -83,10 +120,78 @@ const DataTable = () => {
           onUpdate={handleUpdateProduct}
         />
       )}
+=======
+      <Dialog open={isEditFormOpen} onClose={handleFormClose}>
+        <DialogTitle>Edit Product</DialogTitle>
+        <DialogContent>
+          {editedProduct && (
+            <form className="form-container">
+              <div>
+                <label>Title:</label>
+                <input
+                  type="text"
+                  value={editedProduct.title}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      title: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div>
+                <label>Color:</label>
+                <input
+                  type="text"
+                  value={editedProduct.color}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      color: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div>
+                <label>Quantity:</label>
+                <input
+                  type="number"
+                  value={editedProduct.quantity}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      quantity: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div>
+                <label>Price:</label>
+                <input
+                  type="number"
+                  value={editedProduct.price}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      price: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </form>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleFormClose}>Cancel</Button>
+          <Button onClick={handleUpdateProduct}>Update</Button>
+        </DialogActions>
+      </Dialog>
+>>>>>>> Stashed changes
     </>
   );
 };
 
+<<<<<<< Updated upstream
 const EditProductForm = ({ product, onClose, onUpdate }) => {
   const [title, setTitle] = useState(product.title);
   const [color, setColor] = useState(product.color);
@@ -135,4 +240,6 @@ const EditProductForm = ({ product, onClose, onUpdate }) => {
   );
 };
 
+=======
+>>>>>>> Stashed changes
 export default DataTable;
