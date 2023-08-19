@@ -18,12 +18,38 @@ export default function DataTable() {
     ...customer,
   }));
 
+  const actionColumn = [
+    {
+      field: 'action',
+      headerName: 'Action',
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <div className="cellAction">
+            <button
+              type="button"
+              className="btn btn-primary"
+            >
+              Block
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger"
+            >
+              Delete
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
     <div style={{ height: 640, width: '100%' }}>
       <h2 style={{ textAlign: 'center', fontWeight: 700 }}>Users List</h2>
       <DataGrid
         rows={formattedCustomers}
-        columns={Usercolumns}
+        columns={(Usercolumns|| []).concat(actionColumn)}
         loading={isLoading}
         pagination
         pageSize={10}

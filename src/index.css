@@ -113,3 +113,18 @@ main::-webkit-scrollbar {
 .form-container button {
   margin-right: 10px;
 }
+
+
+.Btn {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}

@@ -31,53 +31,32 @@ export const rows = [
 
 
 
-  export const orderColumn = [
+  export const OrderColumn = [
+    { field: '_id', headerName: 'Order ID', width: 150 },
     {
-      field: 'id', // This field must match the property name in the rows data
-      headerName: 'Order ID', // Header displayed in the DataGrid
-      width: 200,
-      valueGetter: (params) => params.row._id,
-    },
-    {
-      field: 'orderby', // This field must match the property name in the rows data
-      headerName: 'Ordered By', // Header displayed in the DataGrid
-      width: 200,
-      valueGetter: (params) => params.row.user?.firstname + '' + params.row.user?.lastname || "N/A",
-    },
-    {
-      field: 'products',
-      headerName: 'Products',
-      width: 300,
+      field: 'orderedItems',
+      headerName: 'Ordered Items',
+      width: 400,
       renderCell: (params) => {
-        // Custom render function for the "Products" column
-        const orderedItems = params.row.orderedItems|| [];
-        const productsString = orderedItems.map((item) =>{
-          const {quantity,product,color} = item;
-          if(product){
-            return `${quantity} x ${product.title} (${color}) `
-          }
-          return "Product Not Available";
-          
-        }).join(',');
-        return <div>{productsString}</div>;
+        const orderedItems = params.value;
+        return (
+          <div>
+            {orderedItems.map((item, index) => (
+              <div key={index}>
+                <p>Name: {item.product}</p>
+              </div>
+            ))}
+          </div>
+        );
       },
     },
-    {
-      field: 'shipping_address',
-      headerName: 'Address',
-      width: 150,
-    },
-    {
-      field: 'OrderStatus',
-      headerName: 'Order Status',
-      width: 150,
-    },
-    {
-      field: 'total_amount',
-      headerName: 'Total',
-      width: 100,
-    }
+    { field: 'orderStatus', headerName: 'Status', width: 120 },
+    { field: `firstName`, headerName: 'Ordered By', width: 150 },
+    { field: `city`, headerName: 'Address', width: 150 },
+    { field: 'createdAt', headerName: 'Created At', width: 180 },
+    { field: 'totalPrice', headerName: 'Total Price', width: 120 },
   ];
+  
   export const recntOrders = [
     { field: 'id', headerName: 'SN', width: 20 },
     { field: 'name', headerName: ' Name', width: 130 },
@@ -105,7 +84,7 @@ export const rows = [
   ];
 
  export const Productcolumns = [
-    { field: 'id', headerName: 'SN', width: 20 },
+    { field: 'id', headerName: 'SN', width: 100 },
     { field: 'title', headerName: ' Title', width: 130 },
     { field: 'color', headerName: 'Color', width: 90 },
     { field: 'quantity', headerName: 'Quantity', width: 100 },

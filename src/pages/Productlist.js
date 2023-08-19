@@ -15,11 +15,8 @@ const DataTable = () => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.product.products);
   const isLoading = useSelector((state) => state.product.isLoading);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [editedProduct, setEditedProduct] = useState(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-
-  const [editedField, setEditedField] = useState({ id: null, field: null });
-
 
   React.useEffect(() => {
     dispatch(getProducts());
@@ -30,43 +27,40 @@ const DataTable = () => {
   };
 
   const handleEditProduct = (product) => {
-    setSelectedProduct(null); // Clear the selected product
-    setEditedField({ id: product._id, field: null }); // Store the ID of the product to be edited
+    setEditedProduct({ ...product }); // Create a new object for the edited product
     setIsEditFormOpen(true);
   };
-
-  
 
   const handleFormClose = () => {
     setIsEditFormOpen(false);
   };
-  
-  const handleUpdateProduct = () => {
-    // Find the product to be updated based on the selected ID
-    const updatedProduct = products.find((product) => product._id === editedField.id);
 
-    if (updatedProduct && editedField.field) {
-      // Update only the edited field
-      updatedProduct[editedField.field] = selectedProduct[editedField.field];
-      dispatch(updateProduct(updatedProduct));
-    }
+  const handleUpdateProduct = () => {
+    // Create a new array with the updated product
+    const updatedProducts = products.map((product) =>
+      product.id === editedProduct.id ? editedProduct : product
+    );
+
+    // Dispatch the action to update the Redux state
+    dispatch(updateProduct(editedProduct));
+
+    // Update the local state to trigger re-render
+    setEditedProduct(null);
 
     setIsEditFormOpen(false);
-    setEditedField({ id: null, field: null }); // Clear the edited field
   };
 
- 
-  
+
   const formattedProducts = products.map((product) => ({
-    id: product._id,
+    id: product._id, // Use '_id' as the unique 'id' property for each product
     title: product.title,
     color: product.color,
     // color: <Color setColour = {setColor} colourData ={product?.color} />,
     quantity: product.quantity,
     price: product.price,
   }));
-
-  const actionColumn = [
+  
+    const actionColumn = [
     {
       field: 'action',
       headerName: 'Action',
@@ -109,65 +103,41 @@ const DataTable = () => {
       <Dialog open={isEditFormOpen} onClose={handleFormClose}>
         <DialogTitle>Edit Product</DialogTitle>
         <DialogContent>
-          {selectedProduct && editedField.id && (
+          {editedProduct && (
             <form className="form-container">
               <div>
                 <label>Title:</label>
                 <input
                   type="text"
-                  value={selectedProduct.title}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, title: e.target.value })}
+                  value={editedProduct.title}
+                  onChange={(e) => setEditedProduct({ ...editedProduct, title: e.target.value })}
                 />
-                <button
-                  type="button"
-                  onClick={() => setEditedField({ ...editedField, field: 'title' })}
-                >
-                  Save
-                </button>
               </div>
               <div>
                 <label>Color:</label>
                 <input
                   type="text"
-                  value={selectedProduct.color}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, color: e.target.value })}
+                  value={editedProduct.color}
+                  onChange={(e) => setEditedProduct({ ...editedProduct, color: e.target.value })}
                 />
-                <button
-                  type="button"
-                  onClick={() => setEditedField({ ...editedField, field: 'color' })}
-                >
-                  Save
-                </button>
               </div>
               <div>
                 <label>Quantity:</label>
                 <input
                   type="number"
-                  value={selectedProduct.quantity}
+                  value={editedProduct.quantity}
                   onChange={(e) =>
-                    setSelectedProduct({ ...selectedProduct, quantity: e.target.value })
+                    setEditedProduct({ ...editedProduct, quantity: e.target.value })
                   }
                 />
-                <button
-                  type="button"
-                  onClick={() => setEditedField({ ...editedField, field: 'quantity' })}
-                >
-                  Save
-                </button>
               </div>
               <div>
                 <label>Price:</label>
                 <input
                   type="number"
-                  value={selectedProduct.price}
-                  onChange={(e) => setSelectedProduct({ ...selectedProduct, price: e.target.value })}
+                  value={editedProduct.price}
+                  onChange={(e) => setEditedProduct({ ...editedProduct, price: e.target.value })}
                 />
-                <button
-                  type="button"
-                  onClick={() => setEditedField({ ...editedField, field: 'price' })}
-                >
-                  Save
-                </button>
               </div>
             </form>
           )}
