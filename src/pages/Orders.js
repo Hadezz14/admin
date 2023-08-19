@@ -19,13 +19,13 @@ const DataTable = () => {
   
   
 
-  const handleDeliveredClick = async (orderId) => {
-    try {
-      await dispatch(updateOrderStatus({ orderId, status: "Delivered" }));
-    } catch (error) {
-      console.error("Error updating order status:", error);
-    }
-  };
+  // const handleDeliveredClick = async (orderId) => {
+  //   try {
+  //     await dispatch(updateOrderStatus({ orderId, status: "Delivered" }));
+  //   } catch (error) {
+  //     console.error("Error updating order status:", error);
+  //   }
+  // };
 
   React.useEffect(() => {
     if (!orders || orders.length === 0) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteProduct, getProducts, updateProduct } from '../features/product/productSlice';
@@ -15,19 +15,21 @@ const DataTable = () => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.product.products);
   const isLoading = useSelector((state) => state.product.isLoading);
-  const [editedProduct, setEditedProduct] = useState(null);
+  const [productData, setEditedProduct] = useState(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-
+  
   React.useEffect(() => {
     dispatch(getProducts());
-  }, [dispatch]);
+  }, []);
 
   const handleDeleteProduct = (_id) => {
     dispatch(deleteProduct(_id));
   };
 
-  const handleEditProduct = (product) => {
-    setEditedProduct({ ...product }); // Create a new object for the edited product
+  const handleEditProduct = (params) => {
+    
+    const productData = products.find((product) => product._id === params.id);
+    setEditedProduct({ ...productData });
     setIsEditFormOpen(true);
   };
 
@@ -35,32 +37,30 @@ const DataTable = () => {
     setIsEditFormOpen(false);
   };
 
-  const handleUpdateProduct = () => {
-    // Create a new array with the updated product
-    const updatedProducts = products.map((product) =>
-      product.id === editedProduct.id ? editedProduct : product
-    );
-
-    // Dispatch the action to update the Redux state
-    dispatch(updateProduct(editedProduct));
-
-    // Update the local state to trigger re-render
-    setEditedProduct(null);
-
-    setIsEditFormOpen(false);
+  // const handleUpdateProduct = async () => {
+    
+   
+  //     dispatch(updateProduct(productData));
+    
+  //   setEditedProduct(null);
+  //   setIsEditFormOpen(false);
+  // };
+  const handleUpdateProduct =  () => {
+    try {
+      dispatch(updateProduct(productData));
+      setEditedProduct(null);
+      setIsEditFormOpen(false);
+      dispatch(getProducts())
+      
+    } catch (error) {
+      console.log('Error updating product:' ,error)
+    }
+    
   };
-
-
-  const formattedProducts = products.map((product) => ({
-    id: product._id, // Use '_id' as the unique 'id' property for each product
-    title: product.title,
-    color: product.color,
-    // color: <Color setColour = {setColor} colourData ={product?.color} />,
-    quantity: product.quantity,
-    price: product.price,
-  }));
   
-    const actionColumn = [
+
+
+      const actionColumn = [
     {
       field: 'action',
       headerName: 'Action',
@@ -92,42 +92,57 @@ const DataTable = () => {
     <>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
-          rows={formattedProducts}
+          rows={products}
           columns={(Productcolumns || []).concat(actionColumn)}
           loading={isLoading}
+          
           pagination
           pageSize={5}
           checkboxSelection
+          getRowId={(row ) => row._id}
         />
       </div>
       <Dialog open={isEditFormOpen} onClose={handleFormClose}>
         <DialogTitle>Edit Product</DialogTitle>
         <DialogContent>
-          {editedProduct && (
+          {productData && (
             <form className="form-container">
               <div>
                 <label>Title:</label>
                 <input
                   type="text"
-                  value={editedProduct.title}
-                  onChange={(e) => setEditedProduct({ ...editedProduct, title: e.target.value })}
+                  value={productData.title}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      title: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
                 <label>Color:</label>
                 <input
                   type="text"
-                  value={editedProduct.color}
-                  onChange={(e) => setEditedProduct({ ...editedProduct, color: e.target.value })}
+                  value={productData.color}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      color: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
                 <label>Quantity:</label>
                 <input
                   type="number"
-                  value={editedProduct.quantity}
+                  value={productData.quantity}
                   onChange={(e) =>
-                    setEditedProduct({ ...editedProduct, quantity: e.target.value })
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      quantity: e.target.value,
+                    }))
                   }
                 />
               </div>
@@ -135,8 +150,13 @@ const DataTable = () => {
                 <label>Price:</label>
                 <input
                   type="number"
-                  value={editedProduct.price}
-                  onChange={(e) => setEditedProduct({ ...editedProduct, price: e.target.value })}
+                  value={productData.price}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      price: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </form>

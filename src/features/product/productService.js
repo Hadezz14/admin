@@ -16,8 +16,9 @@ const createProduct = async (product) => {
 
 const updateProduct = async (product) => {
   try {
+    console.log(product);
     const response = await axios.put(
-      `${base_url}product/${product.id}`,
+      `${base_url}product/${product._id}`,
       {
         title: product.title,
         color: product.color,
@@ -26,7 +27,9 @@ const updateProduct = async (product) => {
       },
       config
     );
+    console.log(response.data)
     return response.data;
+    
   } catch (error) {
     throw new Error(error);
   }

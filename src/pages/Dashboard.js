@@ -1,122 +1,130 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BsArrowDownRight, BsArrowUpRight } from "react-icons/bs";
 import { Column } from "@ant-design/plots";
-import { DataGrid } from '@mui/x-data-grid';
-import { recntOrders } from "../Datasource.js";
-import { orderData } from "../Datasource.js";
 import { Link, Route, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux"; 
+import { getOrders } from "../features/order/orderSlice";
 
-
-
-
-function createData(id, name, product, amount, date) {
-  return { id, name, product, amount, date };
+class ErrorBoundary extends React.Component{
+  constructor(props){
+    super(props);
+    this.state ={hasError: false};
+  }
+  static getDerivedStateFromError(error){
+    return { hasError: true};
+  }
+  render(){
+    if(this.state.hasError){
+      return<div>Something went wrong.</div>
+    }
+    return this.props.children;
+  }
 }
 
-const rows = [
-  createData(1, 'John Doe', 'Item A', 10, '2023-06-01'),
-  createData(2, 'Jane Smith', 'Item B', 5, '2023-06-02'),
-  createData(3, 'Mike Johnson', 'Item C', 8, '2023-06-03'),
-  createData(4, 'Sarah Brown', 'Item D', 15, '2023-06-04'),
-  createData(5, 'David Wilson', 'Item E', 3, '2023-06-05'),
-  createData(6, 'Emily Davis', 'Item F', 12, '2023-06-06'),
-  createData(7, 'Daniel Lee', 'Item G', 7, '2023-06-07'),
-  createData(8, 'Sophia Anderson', 'Item H', 9, '2023-06-08'),
-  createData(9, 'Michael Brown', 'Item I', 4, '2023-06-09'),
-  createData(10, 'Olivia Taylor', 'Item J', 6, '2023-06-10'),
-];
+const TotalStatistic =({title,value,comparisonText,comparisonPercentage,linkTo}) =>{
+  const navigate = useNavigate();
+  return(
+    <div className="d-flex justify-content-between align-items-center flex-grow-1 bg-white p-3 rounded-3">
+      <div>
+        <p className="desc">{title}</p>
+        <h4 className="mb-0 sub-title">${value}</h4>
+      </div>
+      <div className="d-flex flex-column align-items-end">
+        <h6>
+          {comparisonPercentage > 0 ? <BsArrowUpRight /> : <BsArrowDownRight />} {Math.abs(comparisonPercentage)}%
+        </h6>
+        <p className="mb-0 desc">Compared To April 2022</p>
+        <Link to={linkTo} className="see-statistics-link">
+          {linkTo === "/admin/orders" ? "View Orders" : `See ${title} Statistics`}
+        </Link>
+      </div>
+    </div>
+  )
+  
+}
 
 function BasicTable() {
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.orders.orders);
+
+  React.useEffect(() => {
+    if (!orders || orders.length === 0) {
+      dispatch(getOrders());
+    }
+  }, [dispatch, orders]);
+
+  const recentOrders = orders.slice(0, 10);
+  console.log(recentOrders)
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
+  
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Sn</TableCell>
-            <TableCell align="Center">Name</TableCell>
-            <TableCell align="Center">Product</TableCell>
-            <TableCell align="Center">Amount</TableCell>
-            <TableCell align="Center">Date</TableCell>
+            <TableCell align="center">User Name</TableCell>
+            <TableCell align="center">Product</TableCell>
+            <TableCell align="center">Amount</TableCell>
+            <TableCell align="center">Date</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-      {rows.map((row) => (
-        <TableRow key={row.id}>
-          <TableCell component="th" scope="row">
-            {row.id}
-          </TableCell>
-          <TableCell>{row.name}</TableCell>
-          <TableCell>{row.product}</TableCell>
-          <TableCell>{row.amount}</TableCell>
-          <TableCell>{row.date}</TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
+          {recentOrders.map((row, index) => (
+            <TableRow key={row._id}>
+              <TableCell component="th" scope="row">
+                {index + 1}
+              </TableCell>
+              <TableCell>{row.shippingInfo.firstName}</TableCell>
+              <TableCell>
+                {row.orderedItems.map((item) => item.product).join(", ")}
+              </TableCell>
+              <TableCell>{row.totalPrice}</TableCell>
+              <TableCell>{formatDate(row.createdAt)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
       </Table>
     </TableContainer>
   );
 }
 
+
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const data = [
-    {
-      type: "Jan",
-      sales: 38,
-    },
-    {
-      type: "Feb",
-      sales: 52,
-    },
-    {
-      type: "Mar",
-      sales: 61,
-    },
-    {
-      type: "Apr",
-      sales: 145,
-    },
-    {
-      type: "May",
-      sales: 48,
-    },
-    {
-      type: "Jun",
-      sales: 38,
-    },
-    {
-      type: "July",
-      sales: 38,
-    },
-    {
-      type: "Aug",
-      sales: 38,
-    },
-    {
-      type: "Sept",
-      sales: 38,
-    },
-    {
-      type: "Oct",
-      sales: 38,
-    },
-    {
-      type: "Nov",
-      sales: 38,
-    },
-    {
-      type: "Dec",
-      sales: 38,
-    },
-  ];
-  const config = {
-    data,
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.orders.orders);
+
+  useEffect(() => {
+    if (!orders || orders.length === 0) {
+      dispatch(getOrders());
+    }
+  }, [dispatch, orders]);
+
+  const monthlySalesData = orders.reduce((acc, order) => {
+    const monthYear = order.createdAt.substring(0, 7); // Extract YYYY-MM
+    acc[monthYear] = (acc[monthYear] || 0) + order.totalPrice;
+    return acc;
+  }, {});
+// console.log(monthlySalesData);
+
+  const salesData = Object.keys(monthlySalesData).map((monthYear) => ({
+    type: monthYear,
+    sales: monthlySalesData[monthYear],
+  }));
+  // console.log(salesData)
+
+  const salesConfig = {
+    data: salesData, 
     xField: "type",
     yField: "sales",
-    color: ({ type }) => {
-      return "#ffd333";
-    },
+    color: "#ffd333",
     label: {
       position: "middle",
       style: {
@@ -135,45 +143,53 @@ const Dashboard = () => {
         alias: "Month",
       },
       sales: {
-        alias: "Income",
+        alias: "Total Sales",
       },
     },
   };
 
+
   const config2 = {
-    data,
-    xField: "type",
-    yField: "sales",
-    color: ({ type }) => {
-      return "#008000";
-    },
-    label: {
-      position: "middle",
-      style: {
-        fill: "#FFFFFF",
-        opacity: 1,
-      },
-    },
-    xAxis: {
-      label: {
-        autoHide: true,
-        autoRotate: false,
-      },
-    },
-    meta: {
-      type: {
-        alias: "Month",
-      },
-      sales: {
-        alias: "Income",
-      },
-    },
+    // data,
+    // xField: "type",
+    // yField: "sales",
+    // color: ({ type }) => {
+    //   return "#008000";
+    // },
+    // label: {
+    //   position: "middle",
+    //   style: {
+    //     fill: "#FFFFFF",
+    //     opacity: 1,
+    //   },
+    // },
+    // xAxis: {
+    //   label: {
+    //     autoHide: true,
+    //     autoRotate: false,
+    //   },
+    // },
+    // meta: {
+    //   type: {
+    //     alias: "Month",
+    //   },
+    //   sales: {
+    //     alias: "Income",
+    //   },
+    // },
   };
 
   return (
     <div>
       <h3 className="mb-4 title">Dashboard</h3>
       <div className="d-flex justify-content-between align-items-center gap-3">
+        <TotalStatistic
+          title="Total Sales"
+          value="1100"
+          comparisonText="Compared To April 2022"
+          comparisonPercentage={32}
+          linkTo="#salesStates"
+        />
         <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
           <div>
             <p className="desc">Total Sales</p>
@@ -224,12 +240,18 @@ const Dashboard = () => {
           <BasicTable/>
         </div>
       </div>
+      
       <div className="mt-4" id="salesStates">
         <h3 className="mb-5 title">Sales Statics</h3>
-        <div>
-          <Column {...config} />
-        </div>
+          <ErrorBoundary>
+            <div>
+            {salesData.length > 0 ?<Column {...salesConfig} /> :<p>No data</p> }
+            </div>
+            </ErrorBoundary>
+          
+        
       </div>
+      
       <div className="mt-5" id="revStates">
         <h3 className="mb-5 title">Revenue Statics</h3>
         <div>
