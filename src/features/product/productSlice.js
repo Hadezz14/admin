@@ -65,6 +65,7 @@ export const productSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.products = action.payload;
+        // state.color = action.payload.color.colors;
       })
       .addCase(getProducts.rejected, (state, action) => {
         state.isLoading = false;

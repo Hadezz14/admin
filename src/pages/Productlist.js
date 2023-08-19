@@ -9,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import '../index.css'
+import Color from '../components/Color';
 
 const DataTable = () => {
   const dispatch = useDispatch();
@@ -54,11 +55,13 @@ const DataTable = () => {
     setEditedField({ id: null, field: null }); // Clear the edited field
   };
 
-
+ 
+  
   const formattedProducts = products.map((product) => ({
     id: product._id,
     title: product.title,
     color: product.color,
+    // color: <Color setColour = {setColor} colourData ={product?.color} />,
     quantity: product.quantity,
     price: product.price,
   }));

@@ -1,3 +1,4 @@
+import Color from "./components/Color";
 
 export const Usercolumns = [
     { field: 'id', headerName: 'SN', width: 20 },
