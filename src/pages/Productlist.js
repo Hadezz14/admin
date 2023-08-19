@@ -8,7 +8,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import '../index.css'
+import '../index.css';
 
 const DataTable = () => {
   const dispatch = useDispatch();
@@ -25,8 +25,11 @@ const DataTable = () => {
     dispatch(deleteProduct(_id));
   };
 
-  const handleEditProduct = (product) => {
-    setEditedProduct({ ...product }); // Create a new object for the edited product
+  const handleEditProduct = (params) => {
+    const editedProduct = products.find((product) => product._id === params.id);
+    console.log(editedProduct)
+
+    setEditedProduct({ ...editedProduct });
     setIsEditFormOpen(true);
   };
 
@@ -35,28 +38,15 @@ const DataTable = () => {
   };
 
   const handleUpdateProduct = () => {
-    // Create a new array with the updated product
     const updatedProducts = products.map((product) =>
-      product.id === editedProduct.id ? editedProduct : product
+      product._id === editedProduct._id ? editedProduct : product
     );
-
-    // Dispatch the action to update the Redux state
-    dispatch(updateProduct(editedProduct));
-
-    // Update the local state to trigger re-render
+    dispatch(updateProduct());
     setEditedProduct(null);
-
     setIsEditFormOpen(false);
   };
-  const formattedProducts = products.map((product) => ({
-    id: product._id, // Use '_id' as the unique 'id' property for each product
-    title: product.title,
-    color: product.color,
-    quantity: product.quantity,
-    price: product.price,
-  }));
-  
-    const actionColumn = [
+
+  const actionColumn = [
     {
       field: 'action',
       headerName: 'Action',
@@ -88,12 +78,13 @@ const DataTable = () => {
     <>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
-          rows={formattedProducts}
+          rows={products}
           columns={(Productcolumns || []).concat(actionColumn)}
           loading={isLoading}
           pagination
           pageSize={5}
           checkboxSelection
+          getRowId={(row) => row._id}
         />
       </div>
       <Dialog open={isEditFormOpen} onClose={handleFormClose}>
@@ -106,7 +97,12 @@ const DataTable = () => {
                 <input
                   type="text"
                   value={editedProduct.title}
-                  onChange={(e) => setEditedProduct({ ...editedProduct, title: e.target.value })}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      title: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
@@ -114,7 +110,12 @@ const DataTable = () => {
                 <input
                   type="text"
                   value={editedProduct.color}
-                  onChange={(e) => setEditedProduct({ ...editedProduct, color: e.target.value })}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      color: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
@@ -123,7 +124,10 @@ const DataTable = () => {
                   type="number"
                   value={editedProduct.quantity}
                   onChange={(e) =>
-                    setEditedProduct({ ...editedProduct, quantity: e.target.value })
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      quantity: e.target.value,
+                    }))
                   }
                 />
               </div>
@@ -132,7 +136,12 @@ const DataTable = () => {
                 <input
                   type="number"
                   value={editedProduct.price}
-                  onChange={(e) => setEditedProduct({ ...editedProduct, price: e.target.value })}
+                  onChange={(e) =>
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      price: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </form>
