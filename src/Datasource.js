@@ -38,7 +38,7 @@ export const rows = [
       headerName: 'Ordered Items',
       width: 400,
       renderCell: (params) => {
-        const orderedItems = params.value;
+        const orderedItems = params.value || [];
         return (
           <div>
             {orderedItems.map((item, index) => (

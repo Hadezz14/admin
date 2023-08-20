@@ -44,12 +44,47 @@ export const getOrderByUser = createAsyncThunk(
   }
 );
 
+export const blockUser = createAsyncThunk(
+  "user/blockUser",
+  async (userId, thunkAPI) => {
+    try {
+      return await authService.blockUser(userId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const unblockUser = createAsyncThunk(
+  "user/unblockUser",
+  async (userId, thunkAPI) => {
+    try {
+      return await authService.unblockUser(userId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteUser = createAsyncThunk(
+  "user/deleteUser",
+  async (userId, thunkAPI) => {
+    try {
+      return await authService.deleteUser(userId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+
+
 export const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {},
-  extraReducers: (buildeer) => {
-    buildeer
+  extraReducers: (builder) => {
+    builder
       .addCase(login.pending, (state) => {
         state.isLoading = true;
       })
@@ -97,7 +132,55 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         state.isLoading = false;
-      });
+      })
+      .addCase(blockUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(blockUser.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+        state.message = "success";
+      })
+      .addCase(blockUser.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        state.isLoading = false;
+      })
+      .addCase(unblockUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(unblockUser.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+        state.message = "success";
+      })
+      .addCase(unblockUser.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        state.isLoading = false;
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+        state.message = "success";
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        state.isLoading = false;
+      })
   },
 });
 
