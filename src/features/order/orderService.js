@@ -17,9 +17,10 @@ const updateOrderStatus = async (orderId, status) => {
   try {
     const response = await axios.put(
       `${base_url}user/order/update-order/${orderId}`,
-      { orderStatus: status },
+      { OrderStatus: status },
       config
     );
+    console.log('success')
     return response.data;
   } catch (error) {
     throw new Error(error);
