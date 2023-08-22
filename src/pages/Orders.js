@@ -9,6 +9,12 @@ const DataTable = () => {
   const orders = useSelector((state) => state.orders.orders);
   const isLoading = useSelector((state) => state.orders.isLoading);
 
+  React.useEffect(() => {
+    if (!orders || orders.length === 0) {
+      dispatch(getOrders());
+    }
+  }, [dispatch, orders]);
+
   const handleDispatchedClick = async (orderId) => {
     try {
       await dispatch(updateOrderStatus({ orderId, status: "Dispatched" }));
@@ -19,30 +25,26 @@ const DataTable = () => {
   
   
 
-  // const handleDeliveredClick = async (orderId) => {
-  //   try {
-  //     await dispatch(updateOrderStatus({ orderId, status: "Delivered" }));
-  //   } catch (error) {
-  //     console.error("Error updating order status:", error);
-  //   }
-  // };
-
-  React.useEffect(() => {
-    if (!orders || orders.length === 0) {
-      dispatch(getOrders());
+  const handleDeliveredClick = async (orderId) => {
+    try {
+      await dispatch(updateOrderStatus({ orderId, status: "Delivered" }));
+    } catch (error) {
+      console.error("Error updating order status:", error);
     }
-  }, [dispatch, orders]);
+  };
+
+  
 
   const formattedOrders = Array.isArray(orders)
     ? orders.map((order) => ({
         id: order._id,
         firstName: order.shippingInfo.firstName,
         city: order.shippingInfo.city,
-        ...order,
+        orderStatus: order.OrderStatus,
+        createdAt: order.createdAt,
+        totalPrice: order.orderedItems.totalPrice,
       }))
     : [];
-
-    console.log(orders);
 
   const actionColumn = [
     {

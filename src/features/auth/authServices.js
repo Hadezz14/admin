@@ -23,10 +23,29 @@ const getOrder = async (id) => {
   return response.data;
 };
 
+const blockUser = async (userId) => {
+  const response = await axios.put(`${base_url}user/block-user/${userId}`,config);
+  return response.data;
+};
+
+const unblockUser = async (userId) => {
+  const response = await axios.put(`${base_url}user/unblock-user/${userId}`,config);
+  return response.data;
+};
+
+const deleteUser = async (userId) => {
+  const response = await axios.delete(`${base_url}user/${userId}`);
+  return response.data;
+};
+
+
 const authService = {
   login,
   getOrders,
   getOrder,
+  blockUser,
+  unblockUser,
+  deleteUser,
 };
 
 export default authService;
