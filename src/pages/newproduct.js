@@ -33,7 +33,7 @@ const Newproduct = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [color, setColor] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
 
   const [images, setImages] = useState([]);
   
@@ -68,13 +68,6 @@ const Newproduct = () => {
     ),
   }));
 
-  // const coloropt = [];
-  // colorState.forEach((i) => {
-  //   coloropt.push({
-  //     label: i.title,
-  //     value: i._id,
-  //   });
-  // });
   const img = [];
   imgState.forEach((i) => {
     img.push({
@@ -84,10 +77,10 @@ const Newproduct = () => {
   });
 
   useEffect(() => {
-    formik.setFieldValue("color",color ||[])
+    formik.values.color = selectedColors || [];
     
     formik.values.images = img;
-  }, [color,img]);
+  }, [selectedColors,img]);
 
   const formik = useFormik({
     initialValues: {
@@ -103,6 +96,7 @@ const Newproduct = () => {
     },
     validationSchema: schema,
     onSubmit: (values) => {
+      console.log(values)
         if(values.color.length === 0){
             formik.setFieldError('color','Pick a colour color');
         }
@@ -118,8 +112,9 @@ const Newproduct = () => {
       
     },
   });
-  const handleColors = (value) => {
-    formik.setFieldValue("color",[value]);
+  const handleColors = (selectedOptions) => {
+    const setlectedColorIds = selectedOptions.map((option) => option.value)
+    setSelectedColors(setlectedColorIds);
   };
   return (
     <div>
@@ -127,6 +122,7 @@ const Newproduct = () => {
       <div>
         <form
           onSubmit={formik.handleSubmit}
+          encType="multipart/form-data"
           className="d-flex gap-3 flex-column"
         >
           <CustomInput
@@ -208,14 +204,17 @@ const Newproduct = () => {
           <div>
             <label htmlFor="color">Select Color:</label>
             <Select
+              // className={styles['custom-select']}
               name="color"
               options={colorOptions}
-              value={colorOptions.find((option) => option.value === formik.values.color[0])}
-              onChange={(selectedOption) => {
-                handleColors(selectedOption.value);
-                formik.setFieldValue("color", [selectedOption.value]);
+              value={colorOptions.filter((option) => 
+                selectedColors.includes(option.value)
+                )}
+              onChange={(selectedOptions) => {
+                handleColors(selectedOptions)
               }}
               placeholder="Select Color"
+              mode="multiple"
             />
             <div className="error">{formik.touched.color && formik.errors.color}</div>
           </div>
@@ -268,6 +267,7 @@ const Newproduct = () => {
             type="submit"
           >
             Add Product
+            
           </button>
         </form>
       </div>
