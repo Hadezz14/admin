@@ -25,28 +25,22 @@ export default function DataTable() {
     dispatch(deleteAProductCategory(_id));
   };
 
-  const handleEditCategory = (category) => {
-    setCategoryData(category);
+  const handleEditCategory = (params) => {
+    const categoryData = pCategories.find((pcategory) => pcategory._id === params.id);
+    setCategoryData({ ...categoryData });
     setIsEditFormOpen(true);
   };
 
   const handleUpdateCategory = () => {
-    if (categoryData && categoryData.title) {
+    console.log(categoryData);
       dispatch(updateAProductCategory(categoryData));
       setIsEditFormOpen(false);
-    } else {
-      console.log('CD not found');
-    }
   };
 
   const handleCloseForm = () => {
     setIsEditFormOpen(false);
   };
 
-  const formattedCategories = pCategories.map((category) => ({
-    id: category._id,
-    ...category,
-  }));
 
   const actionColumn = [
     {
@@ -79,13 +73,14 @@ export default function DataTable() {
   return (
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid
-        rows={formattedCategories}
+        rows={pCategories}
         columns={(Categorycolumns || []).concat(actionColumn)}
         loading={isLoading}
         pagination
         pageSize={5}
         pageSizeOptions={[5, 10]}
         checkboxSelection
+        getRowId={(row ) => row._id}
       />
       {categoryData && (
         <Dialog open={isEditFormOpen} onClose={handleCloseForm}>
@@ -96,7 +91,10 @@ export default function DataTable() {
             <input
               type="text"
               value={categoryData.title}
-              onChange={(e) => setCategoryData({ ...categoryData, title: e.target.value })}
+              onChange={(e) => setCategoryData((prevProduct) => ({
+                ...prevProduct,
+                title: e.target.value,
+              }))}
             />
             </form>
           </DialogContent>

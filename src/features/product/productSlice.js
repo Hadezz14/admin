@@ -34,9 +34,9 @@ export const updateProduct = createAsyncThunk(
 );
 export const deleteProduct = createAsyncThunk(
   "product/delete-product",
-  async (id, thunkAPI) => {
+  async (productData, thunkAPI) => {
     try {
-      return await productService.deleteProduct(id);
+      return await productService.deleteProduct(productData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }

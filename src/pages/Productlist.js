@@ -22,10 +22,6 @@ const DataTable = () => {
     dispatch(getProducts());
   }, []);
 
-  const handleDeleteProduct = (_id) => {
-    dispatch(deleteProduct(_id));
-  };
-
   const handleEditProduct = (params) => {
     
     const productData = products.find((product) => product._id === params.id);
@@ -36,15 +32,6 @@ const DataTable = () => {
   const handleFormClose = () => {
     setIsEditFormOpen(false);
   };
-
-  // const handleUpdateProduct = async () => {
-    
-   
-  //     dispatch(updateProduct(productData));
-    
-  //   setEditedProduct(null);
-  //   setIsEditFormOpen(false);
-  // };
   const handleUpdateProduct =  () => {
     try {
       dispatch(updateProduct(productData));
@@ -56,6 +43,10 @@ const DataTable = () => {
       console.log('Error updating product:' ,error)
     }
     
+  };
+
+  const handleDeleteProduct = () => {
+    dispatch(deleteProduct(productData));
   };
   
 
