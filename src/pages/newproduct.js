@@ -14,8 +14,7 @@ import { Select } from "antd";
 import Dropzone from "react-dropzone";
 import { delImg, uploadImg } from "../features/upload/uploadSlice";
 import { createProducts, resetState } from "../features/product/productSlice";
-import {ChromePicker} from "react-color";
-import Colorlist from "./Colotlist";
+
 let schema = yup.object().shape({
   title: yup.string().required("Title is Required"),
   description: yup.string().required("Description is Required"),
@@ -25,8 +24,8 @@ let schema = yup.object().shape({
   tags: yup.string().required("Tag is Required"),
   color: yup
     .array()
-    .min(1, "Pick at least one color")
-    .default(""),
+    .min(1, "Pick at least one color ")
+    .default([]),
   quantity: yup.number().required("Quantity is Required"),
 });
 
@@ -38,12 +37,6 @@ const Newproduct = () => {
 
   const [images, setImages] = useState([]);
   
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const toggleColorPicker = () =>{
-    setShowColorPicker((prevState) => !prevState);
-  }
-
-
   useEffect(() => {
     dispatch(getBrands());
     dispatch(getCategories());
@@ -53,6 +46,7 @@ const Newproduct = () => {
   const brandState = useSelector((state) => state.brand.brands);
   const catState = useSelector((state) => state.pCategory.pCategories);
   const colorState = useSelector((state) => state.color.colors);
+ 
   const imgState = useSelector((state) => state.upload.images);
   const newProduct = useSelector((state) => state.product);
   const { isSuccess, isError, isLoading, createdProduct } = newProduct;
@@ -64,13 +58,23 @@ const Newproduct = () => {
       toast.error("Something Went Wrong!");
     }
   }, [isSuccess, isError, isLoading]);
-  const coloropt = [];
-  colorState.forEach((i) => {
-    coloropt.push({
-      label: i.title,
-      value: i._id,
-    });
-  });
+  
+  const colorOptions = colorState.map((color) => ({
+    value: color._id,
+    label: (
+      <div style={{ backgroundColor: color.title, padding: "10px", color: "white" }}>
+        {color.title}
+      </div>
+    ),
+  }));
+
+  // const coloropt = [];
+  // colorState.forEach((i) => {
+  //   coloropt.push({
+  //     label: i.title,
+  //     value: i._id,
+  //   });
+  // });
   const img = [];
   imgState.forEach((i) => {
     img.push({
@@ -80,9 +84,11 @@ const Newproduct = () => {
   });
 
   useEffect(() => {
-    formik.values.color = color || [];
+    formik.setFieldValue("color",color ||[])
+    
     formik.values.images = img;
-  }, [color, img]);
+  }, [color,img]);
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -98,9 +104,10 @@ const Newproduct = () => {
     validationSchema: schema,
     onSubmit: (values) => {
         if(values.color.length === 0){
-            formik.setFieldError('color','Pick at least on color');
+            formik.setFieldError('color','Pick a colour color');
         }
         else{
+            console.log(values)
             dispatch(createProducts(values));
       formik.resetForm();
       formik.setFieldValue("color",[])
@@ -198,74 +205,22 @@ const Newproduct = () => {
           <div className="error">
             {formik.touched.category && formik.errors.category}
           </div>
-          {/* <select
-            name="tags"
-            onChange={formik.handleChange("tags")}
-            onBlur={formik.handleBlur("tags")}
-            value={formik.values.tags}
-            className="form-control py-3 mb-3"
-            id=""
-          >
-            <option value="" disabled>
-              Select Category
-            </option>
-            <option value="featured">Featured</option>
-            <option value="popular">Popular</option>
-            <option value="special">Special</option>
-          </select>
-          <div className="error">
-            {formik.touched.tags && formik.errors.tags}
-          </div> */}
-           {/* Add the color form */}
-           <div>
-            <CustomInput
-              type="text"
-              label="Enter Color"
+          <div>
+            <label htmlFor="color">Select Color:</label>
+            <Select
               name="color"
-            //   onChng={(value) => {
-            //     setSelectedColor(value); // Update the selected color value
-            //     formik.setFieldValue("color", [value]); // Update the formik field value
-            //   }}
-                onChng={handleColors}
-              onBlr={formik.handleBlur("color")}
-              val={formik.values.color[0]}
+              options={colorOptions}
+              value={colorOptions.find((option) => option.value === formik.values.color[0])}
+              onChange={(selectedOption) => {
+                handleColors(selectedOption.value);
+                formik.setFieldValue("color", [selectedOption.value]);
+              }}
+              placeholder="Select Color"
             />
             <div className="error">{formik.touched.color && formik.errors.color}</div>
-            <button
-              className="btn btn-primary rounded-3 my-1"
-              type="button"
-            
-              onClick={toggleColorPicker}
-            >
-              {showColorPicker ? "Close Color Picker" : "Open Color Picker"}
-            </button>
-            {showColorPicker &&(
-                <ChromePicker
-                color={formik.values.color[0]}
-                onChange={(updatedColor) => {
-                  const { hex } = updatedColor;
-                //   setSelectedColor(hex);
-                //   formik.setFieldValue("color", [hex]);
-                    handleColors(hex);
-                }}
-              />
-            )}
-            {/* <button
-    className="btn btn-primary rounded-3 my-1"
-    type="button"
-    onClick={() => {
-      if (selectedColor.trim() !== "") {
-        dispatch(createColor({ title: selectedColor}));
-        setSelectedColor("");
-      }
-    }}
-  >
-    Add Color
-  </button> */}
- </div>
-          
+          </div>
 
-          {/* <Colorlist/> */}
+
           <CustomInput
             type="number"
             label="Enter Product Quantity"
@@ -321,3 +276,7 @@ const Newproduct = () => {
 };
 
 export default Newproduct;
+
+
+
+
