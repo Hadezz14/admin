@@ -11,6 +11,7 @@ export const uploadImg = createAsyncThunk(
       }
       return await uploadService.uploadImg(formData);
     } catch (error) {
+
       return thunkAPI.rejectWithValue(error);
     }
   }
