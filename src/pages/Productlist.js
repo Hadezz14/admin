@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import '../index.css'
-import Color from '../components/Color';
+import { SketchPicker } from 'react-color';
 
 const DataTable = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const DataTable = () => {
   const isLoading = useSelector((state) => state.product.isLoading);
   const [productData, setEditedProduct] = useState(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-  const [newColor, setNewColor] = useState("");
+  const [currentColor, setCurrentColor] = useState("#ffffff");
   
   React.useEffect(() => {
     dispatch(getProducts());
@@ -113,39 +113,46 @@ const DataTable = () => {
                 />
               </div>
               <div>
-        <label>Color:</label>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          {productData.color.map((color, index) => (
-            <div key={index} style={{ marginRight: '8px' }}>
-              <ColorBadge color={color} />
-              <button
-                type="button"
-                onClick={() =>
-                  setEditedProduct((prevProduct) => ({
-                    ...prevProduct,
-                    color: prevProduct.color.filter((_, i) => i !== index),
-                  }))
-                }
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-          <input
-            type="text"
-            value={newColor}
-            onChange={(e) => setNewColor(e.target.value)}
+        <label>Colors:</label>
+        <div className="color-picker-container">
+          <div className="selected-colors">
+            {productData.color.map((color, index) => (
+              <div key={index} className="selected-color">
+                <ColorBadge color={color} />
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => {
+                    const updatedColors = productData.color.filter(
+                      (_, i) => i !== index
+                    );
+                    setEditedProduct((prevProduct) => ({
+                      ...prevProduct,
+                      color: updatedColors,
+                    }));
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+          <SketchPicker
+            color={currentColor}
+            onChange={(color) => {
+              setCurrentColor(color.hex);
+            }}
           />
           <button
-            type="button"
-            onClick={() =>
+            className="btn btn-primary"
+            onClick={(e) => {e.preventDefault();
               setEditedProduct((prevProduct) => ({
                 ...prevProduct,
-                color: [...prevProduct.color, newColor],
-              }))
-            }
+                color: [...prevProduct.color, currentColor],
+              }));
+              // setCurrentColor("#ffffff"); // Reset the color picker
+            }}
           >
-            Add
+            Add Color
           </button>
         </div>
       </div>
