@@ -24,12 +24,20 @@ const getOrder = async (id) => {
 };
 
 const blockUser = async (userId) => {
-  const response = await axios.put(`${base_url}user/block-user/${userId}`,config);
-  return response.data;
+  try {
+    const response = await axios.put(
+      `${base_url}user/block-user/${userId}`,
+      {},
+      config
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 const unblockUser = async (userId) => {
-  const response = await axios.put(`${base_url}user/unblock-user/${userId}`,config);
+  const response = await axios.put(`${base_url}user/unblock-user/${userId}`,{},config);
   return response.data;
 };
 

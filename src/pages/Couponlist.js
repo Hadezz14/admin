@@ -20,32 +20,35 @@ const DataTable = () => {
     dispatch(getAllCoupon());
   }, [dispatch]);
 
-  const handleCouponDelete = (_id) => {
-    dispatch(deleteACoupon(_id));
+  const handleCouponDelete = async (_id) => {
+    try{
+      await dispatch(deleteACoupon(_id));
+      dispatch(getAllCoupon());
+    } catch (error) {
+      console.log('Error deleting coupon:', error);
+    }
   };
 
-  const handleEditCoupon = (coupon) => {
-    setSelectedCoupon(coupon);
+  const handleEditCoupon = (params) => {
+    const selectedCoupon = coupons.find((coupon) => coupon._id === params.id);
+    setSelectedCoupon({ ...selectedCoupon });
     setIsEditFormOpen(true);
   };
 
   const handleUpdateCoupon = () => {
-    if (selectedCoupon && (selectedCoupon.name || selectedCoupon.discount || selectedCoupon.expiry)) {
-      dispatch(updateACoupon(selectedCoupon));
-      setIsEditFormOpen(false);
-    } else {
-      console.log('Coupon data not found or incomplete');
-    }
+   try{
+    dispatch(updateACoupon(selectedCoupon));
+    setSelectedCoupon(null);
+    setIsEditFormOpen(false);
+    dispatch(getAllCoupon())
+   } catch (error){
+    console.log('error updating Coupon', error)
+   }
   };
 
   const handleCloseForm = () => {
     setIsEditFormOpen(false);
   };
-
-  const formattedCoupons = coupons.map((coupon) => ({
-    id: coupon._id,
-    ...coupon,
-  }));
 
   const actionColumn = [
     {
@@ -79,7 +82,7 @@ const DataTable = () => {
     <>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
-          rows={formattedCoupons}
+          rows={coupons}
           columns={(Couponcolumns || []).concat(actionColumn)}
           loading={isLoading}
           initialState={{
@@ -89,6 +92,7 @@ const DataTable = () => {
           }}
           pageSizeOptions={[5, 10]}
           checkboxSelection
+          getRowId={(row ) => row._id}
         />
       </div>
       {selectedCoupon && (
@@ -100,19 +104,31 @@ const DataTable = () => {
             <input
               type="text"
               value={selectedCoupon.name}
-              onChange={(e) => setSelectedCoupon({ ...selectedCoupon, name: e.target.value })}
+              onChange={(e) => setSelectedCoupon((prevProduct) => ({
+                ...prevProduct,
+                name: e.target.value,
+              }))
+            }
             />
             <label>Discount Amount:</label>
             <input
               type="number"
               value={selectedCoupon.discount}
-              onChange={(e) => setSelectedCoupon({ ...selectedCoupon, discount: e.target.value })}
+              onChange={(e) => setSelectedCoupon((prevProduct) => ({
+                ...prevProduct,
+                discount: e.target.value,
+              }))
+            }
             />
             <label>Expiry Date:</label>
             <input
               type="date"
               value={selectedCoupon.expiry}
-              onChange={(e) => setSelectedCoupon({ ...selectedCoupon, expiry: e.target.value })}
+              onChange={(e) => setSelectedCoupon((prevProduct) => ({
+                ...prevProduct,
+                expiry: e.target.value,
+              }))
+            }
             />
             </form>
           </DialogContent>

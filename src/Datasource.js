@@ -32,60 +32,63 @@ export const rows = [
 
 
   export const OrderColumn = [
-    { field: '_id', headerName: 'Order ID', width: 150 },
+    { field: 'id', headerName: 'Order ID', width: 210},
+    { field: 'orderedItems', headerName: 'Orders', width: 150 },
+    { field: 'quantity', headerName: 'Sold Quantity', width: 90 },
+    { field: 'orderStatus', headerName: 'Status', width: 120 },
+    { field: 'firstName', headerName: 'Ordered By', width: 150 },
+    { field: 'city', headerName: 'Address', width: 150 },
     {
-      field: 'orderedItems',
-      headerName: 'Ordered Items',
-      width: 400,
+      field: 'createdAt',
+      headerName: 'Ordered Date',
+      width: 190,
+      valueFormatter: (params) => {
+        const createdAtDate = new Date(params.value);
+        const options = {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        };
+        return createdAtDate.toLocaleString(undefined, options);
+      },
+    },
+    { field: 'totalPrice', headerName: 'Total Price', width: 120 },
+  ];
+
+  export const ColorBadge = ({ color }) => {
+    const colorStyle = {
+      width: '24px',
+      height: '24px',
+      borderRadius: '50%',
+      backgroundColor: color,
+      display: 'inline-block',
+      marginRight: '4px',
+      border: '1px solid #ccc',
+    };
+  
+    return <div style={colorStyle}></div>;
+  };
+
+ export const Productcolumns = [
+    { field: 'title', headerName: ' Title', width: 130 },
+    {
+      field: 'color',
+      headerName: 'Colors',
+      width: 120,
       renderCell: (params) => {
-        const orderedItems = params.value || [];
+        const colors = params.value; // Assuming params.value is an array of colors
         return (
           <div>
-            {orderedItems.map((item, index) => (
-              <div key={index}>
-                <p>Name: {item.product}</p>
-              </div>
+            {colors.map((color, index) => (
+              <ColorBadge key={index} color={color} />
             ))}
           </div>
         );
       },
     },
-    { field: 'orderStatus', headerName: 'Status', width: 120 },
-    { field: `firstName`, headerName: 'Ordered By', width: 150 },
-    { field: `city`, headerName: 'Address', width: 150 },
-    { field: 'createdAt', headerName: 'Created At', width: 180 },
-    { field: 'totalPrice', headerName: 'Total Price', width: 120 },
-  ];
-  
-  export const recntOrders = [
-    { field: 'id', headerName: 'SN', width: 20 },
-    { field: 'name', headerName: ' Name', width: 130 },
-    { field: 'product', headerName: 'product', width: 130 },
-    { field: 'amount', headerName: 'amount', type:'number', width: 80 },
-    { field: 'date', headerName: 'Date', width: 150 },
-  ];
-
-  export const orderData = [
-    { id: 1, name: 'John Doe', product: 'Item A', amount: 10, date: '2023-06-01', action: 'View' },
-    { id: 2, name: 'Jane Smith', product: 'Item B', amount: 5, date: '2023-06-02', action: 'Edit' },
-    { id: 3, name: 'Mike Johnson', product: 'Item C', amount: 8, date: '2023-06-03', action: 'Delete' },
-    { id: 4, name: 'Sarah Brown', product: 'Item D', amount: 15, date: '2023-06-04', action: 'View' },
-    { id: 5, name: 'David Wilson', product: 'Item E', amount: 3, date: '2023-06-05', action: 'Edit' },
-    { id: 6, name: 'Emily Davis', product: 'Item F', amount: 12, date: '2023-06-06', action: 'Delete' },
-    { id: 7, name: 'Daniel Lee', product: 'Item G', amount: 7, date: '2023-06-07', action: 'Edit' },
-    { id: 8, name: 'Sophia Anderson', product: 'Item H', amount: 9, date: '2023-06-08', action: 'View' },
-    { id: 9, name: 'Michael Brown', product: 'Item I', amount: 4, date: '2023-06-09', action: 'Delete' },
-    { id: 10, name: 'Olivia Taylor', product: 'Item J', amount: 6, date: '2023-06-10', action: 'Edit' },
-    // { id: 11, name: 'Ethan Wilson', product: 'Item K', amount: 14, date: '2023-06-11', action: 'View' },
-    // { id: 12, name: 'Isabella Moore', product: 'Item L', amount: 11, date: '2023-06-12', action: 'Edit' },
-    // { id: 13, name: 'Mason Thompson', product: 'Item M', amount: 8, date: '2023-06-13', action: 'Delete' },
-    // { id: 14, name: 'Ava Martinez', product: 'Item N', amount: 3, date: '2023-06-14', action: 'View' },
-    // { id: 15, name: 'William Garcia', product: 'Item O', amount: 5, date: '2023-06-15', action: 'Edit' },
-  ];
-
- export const Productcolumns = [
-    { field: 'title', headerName: ' Title', width: 130 },
-    { field: 'color', headerName: 'Color', width: 90 },
     { field: 'quantity', headerName: 'Quantity', width: 100 },
     { field: 'price', headerName: 'Price', width: 100 },
   ];
@@ -101,9 +104,24 @@ export const rows = [
     { field: 'expiry', headerName: ' Expiry Date', width: 130 },];
   
 export const Enquirycolumns = [
-    { field: 'id', headerName: 'SN', width: 20 },
     { field: 'name', headerName: ' Name', width: 130 },
     { field: 'email', headerName: 'email', width: 130 },
-    { field: 'message', headerName: 'Message', width: 150 },
-    { field: 'date', headerName: 'Date', type:'date', width: 150 },
+    { field: 'comment', headerName: 'Message', width: 150 },
+    {
+      field: 'createdAt',
+      headerName: 'Date',
+      width: 190,
+      valueFormatter: (params) => {
+        const createdAtDate = new Date(params.value);
+        const options = {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        };
+        return createdAtDate.toLocaleString(undefined, options);
+      },
+    },
   ];

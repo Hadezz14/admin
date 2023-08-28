@@ -13,15 +13,10 @@ export default function DataTable() {
     dispatch(getEnquiries());
   }, [dispatch]);
 
-  const formattedEnquiries = enquiries.map((enquiry) => ({
-    id: enquiry._id,
-    ...enquiry,
-  }));
-
   return (
     <div style={{ height: 400, width: '100%' }}>
       <DataGrid
-        rows={formattedEnquiries}
+        rows={enquiries}
         columns={Enquirycolumns}
         loading={isLoading}
         initialState={{
@@ -30,6 +25,7 @@ export default function DataTable() {
           },
         }}
         checkboxSelection
+        getRowId={(row ) => row._id}
       />
     </div>
   );

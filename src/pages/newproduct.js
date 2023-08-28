@@ -14,6 +14,10 @@ import { Select } from "antd";
 import Dropzone from "react-dropzone";
 import { delImg, uploadImg } from "../features/upload/uploadSlice";
 import { createProducts, resetState } from "../features/product/productSlice";
+import { SketchPicker } from 'react-color';
+import { ColorBadge } from "../Datasource";
+
+
 
 let schema = yup.object().shape({
   title: yup.string().required("Title is Required"),
@@ -33,9 +37,10 @@ const Newproduct = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [selectedColors, setSelectedColors] = useState([]);
+  const [currentColor, setCurrentColor] = useState("#ffffff");
 
   const [images, setImages] = useState([]);
+  console.log(currentColor)
   
   useEffect(() => {
     dispatch(getBrands());
@@ -59,14 +64,6 @@ const Newproduct = () => {
     }
   }, [isSuccess, isError, isLoading]);
   
-  const colorOptions = colorState.map((color) => ({
-    value: color._id,
-    label: (
-      <div style={{ backgroundColor: color.title, padding: "10px", color: "white" }}>
-        {color.title}
-      </div>
-    ),
-  }));
 
   const img = [];
   imgState.forEach((i) => {
@@ -76,17 +73,39 @@ const Newproduct = () => {
     });
   });
 
+  const createProductHandler = async (values) => {
+    try {
+      const createdProduct = await dispatch(createProducts(values));
+      console.log("Created product:", createdProduct);
+      if (createdProduct) {
+        // formik.resetForm();
+        toast.success("Product Added Successfully!");
+        setTimeout(() => {
+          dispatch(resetState());
+        }, 3000);
+      } else {
+        toast.error("Something Went Wrong!");
+      }
+    } catch (error) {
+      console.error("Error creating product:", error);
+      toast.error("Something Went Wrong!");
+    }
+  };
+  
+  
+
   useEffect(() => {
-    formik.values.color = selectedColors || [];
     
     formik.values.images = img;
-  }, [selectedColors,img]);
+  }, [img]);
 
+  
   const formik = useFormik({
     initialValues: {
       title: "",
       description: "",
       price: "",
+      profit: "",
       brand: "",
       category: "",
       tags: "",
@@ -96,32 +115,27 @@ const Newproduct = () => {
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      console.log(values)
-        if(values.color.length === 0){
-            formik.setFieldError('color','Pick a colour color');
-        }
-        else{
-            console.log(values)
-            dispatch(createProducts(values));
-      formik.resetForm();
-      formik.setFieldValue("color",[])
-      setTimeout(() => {
-        dispatch(resetState());
-      }, 3000);
+      console.log("Submitting form", values);
+      if (values.color.length === 0) { // Check if at least one color is selected
+        formik.setFieldError("color", "Pick at least one color");
+      } else {
+        console.log("Dispatching createProducts action", values);
+        createProductHandler(values);
+      }
     }
-      
-    },
+    
+    
   });
-  const handleColors = (selectedOptions) => {
-    const setlectedColorIds = selectedOptions.map((option) => option.value)
-    setSelectedColors(setlectedColorIds);
-  };
+  // const handleColors = (selectedOptions) => {
+  //   const setlectedColorIds = selectedOptions.map((option) => option.value)
+  //   setSelectedColors(setlectedColorIds);
+  // };
   return (
     <div>
       <h3 className="mb-4 title">Add Product</h3>
       <div>
-        <form
-          onSubmit={formik.handleSubmit}
+      <form
+          onSubmit={(e) => e.preventDefault()}
           encType="multipart/form-data"
           className="d-flex gap-3 flex-column"
         >
@@ -158,28 +172,16 @@ const Newproduct = () => {
           <div className="error">
             {formik.touched.price && formik.errors.price}
           </div>
-          <select
-            name="brand"
-            onChange={formik.handleChange("brand")}
-            onBlur={formik.handleBlur("brand")}
-            value={formik.values.brand}
-            className="form-control py-3 mb-3"
-            id=""
-          >
-            <option value="" disabled>
-              Select Category
-            </option>
-            <option value="Vaym">Vyam</option>
-            {/* {brandState.map((i, j) => {
-              return (
-                <option key={j} value={i.title}>
-                  {i.title}
-                </option>
-              );
-            })} */}
-          </select>
+          <CustomInput
+            type="number"
+            label="Enter Product Profit"
+            name="profit"
+            onChng={formik.handleChange("profit")}
+            onBlr={formik.handleBlur("profit")}
+            val={formik.values.profit}
+          />
           <div className="error">
-            {formik.touched.brand && formik.errors.brand}
+            {formik.touched.profit && formik.errors.profit}
           </div>
           <select
             name="category"
@@ -202,22 +204,47 @@ const Newproduct = () => {
             {formik.touched.category && formik.errors.category}
           </div>
           <div>
-            <label htmlFor="color">Select Color:</label>
-            <Select
-              // className={styles['custom-select']}
-              name="color"
-              options={colorOptions}
-              value={colorOptions.filter((option) => 
-                selectedColors.includes(option.value)
-                )}
-              onChange={(selectedOptions) => {
-                handleColors(selectedOptions)
-              }}
-              placeholder="Select Color"
-              mode="multiple"
-            />
-            <div className="error">{formik.touched.color && formik.errors.color}</div>
+  <label htmlFor="color">Select Colors:</label>
+  <div className="color-picker-container">
+    <SketchPicker
+      color={currentColor}
+      onChange={(color) => {
+        setCurrentColor(color.hex);
+      }}
+    />
+    <button
+      className="btn btn-primary"
+      onClick={() => {
+        formik.setFieldValue("color", [
+          ...formik.values.color,
+          currentColor
+        ]);
+        setCurrentColor("#ffffff"); // Reset the color picker
+      }}
+    >
+      Add Color
+    </button>
+  </div>
+  <div className="selected-colors">
+            {formik.values.color.map((color, index) => (
+              <div key={index} className="selected-color">
+                <ColorBadge color={color} />
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => {
+                    const updatedColors = formik.values.color.filter(
+                      (c, i) => i !== index
+                    );
+                    formik.setFieldValue("color", updatedColors);
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
           </div>
+</div>
+
 
 
           <CustomInput
@@ -263,12 +290,13 @@ const Newproduct = () => {
             })}
           </div>
           <button
-            className="btn btn-success border-0 rounded-3 my-5"
-            type="submit"
-          >
-            Add Product
-            
-          </button>
+        className="btn btn-success border-0 rounded-3 my-5"
+        type="submit"
+        onClick={() =>{createProductHandler(formik.values)
+        }}
+      >
+        Add Product
+      </button>
         </form>
       </div>
     </div>

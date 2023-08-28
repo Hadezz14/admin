@@ -123,6 +123,9 @@ export const pCategorySlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.deletedCategory = action.payload;
+        state.pCategories = state.pCategories.map((pCategory) =>
+          pCategory._id === action.payload._id ? action.payload : pCategory
+        );
       })
       .addCase(deleteAProductCategory.rejected, (state, action) => {
         state.isLoading = false;

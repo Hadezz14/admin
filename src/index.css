@@ -125,6 +125,16 @@ main::-webkit-scrollbar {
   transition: background-color 0.3s ease;
 }
 
-.btn:hover {
-  background-color: #0056b3;
+.viewOrder {
+ float: right;
+ padding: 6px;
+}
+
+.selected-colors{
+  margin-top: 0.9rem;
+}
+
+.selected-color{
+  display: flex;
+  margin-bottom: 0.7rem;
 }

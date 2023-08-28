@@ -21,9 +21,15 @@ export default function DataTable() {
     dispatch(getCategories());
   }, [dispatch]);
 
-  const handleDeleteCategory = (_id) => {
-    dispatch(deleteAProductCategory(_id));
+  const handleDeleteCategory = async (_id) => {
+    try {
+      await dispatch(deleteAProductCategory(_id));
+      dispatch(getCategories());
+    } catch (error) {
+      console.log('Error deleting category:', error);
+    }
   };
+  
 
   const handleEditCategory = (params) => {
     const categoryData = pCategories.find((pcategory) => pcategory._id === params.id);

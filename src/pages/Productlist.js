@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteProduct, getProducts, updateProduct } from '../features/product/productSlice';
-import { Productcolumns } from '../Datasource';
+import { ColorBadge, Productcolumns } from '../Datasource';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -17,11 +17,12 @@ const DataTable = () => {
   const isLoading = useSelector((state) => state.product.isLoading);
   const [productData, setEditedProduct] = useState(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [newColor, setNewColor] = useState("");
   
   React.useEffect(() => {
     dispatch(getProducts());
   }, []);
-
+  console.log(products)
   const handleEditProduct = (params) => {
     
     const productData = products.find((product) => product._id === params.id);
@@ -112,18 +113,42 @@ const DataTable = () => {
                 />
               </div>
               <div>
-                <label>Color:</label>
-                <input
-                  type="text"
-                  value={productData.color}
-                  onChange={(e) =>
-                    setEditedProduct((prevProduct) => ({
-                      ...prevProduct,
-                      color: e.target.value,
-                    }))
-                  }
-                />
-              </div>
+        <label>Color:</label>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {productData.color.map((color, index) => (
+            <div key={index} style={{ marginRight: '8px' }}>
+              <ColorBadge color={color} />
+              <button
+                type="button"
+                onClick={() =>
+                  setEditedProduct((prevProduct) => ({
+                    ...prevProduct,
+                    color: prevProduct.color.filter((_, i) => i !== index),
+                  }))
+                }
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <input
+            type="text"
+            value={newColor}
+            onChange={(e) => setNewColor(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() =>
+              setEditedProduct((prevProduct) => ({
+                ...prevProduct,
+                color: [...prevProduct.color, newColor],
+              }))
+            }
+          >
+            Add
+          </button>
+        </div>
+      </div>
               <div>
                 <label>Quantity:</label>
                 <input

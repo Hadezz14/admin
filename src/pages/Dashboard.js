@@ -4,7 +4,7 @@ import { Column } from "@ant-design/plots";
 import { Link, Route, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux"; 
-import { getOrders } from "../features/order/orderSlice";
+import { getOrders, orderSlice } from "../features/order/orderSlice";
 
 class ErrorBoundary extends React.Component{
   constructor(props){
@@ -21,38 +21,37 @@ class ErrorBoundary extends React.Component{
     return this.props.children;
   }
 }
-
-const TotalStatistic =({title,value,comparisonText,comparisonPercentage,linkTo}) =>{
-  const navigate = useNavigate();
-  return(
-    <div className="d-flex justify-content-between align-items-center flex-grow-1 bg-white p-3 rounded-3">
-      <div>
-        <p className="desc">{title}</p>
-        <h4 className="mb-0 sub-title">${value}</h4>
-      </div>
-      <div className="d-flex flex-column align-items-end">
-        <h6>
-          {comparisonPercentage > 0 ? <BsArrowUpRight /> : <BsArrowDownRight />} {Math.abs(comparisonPercentage)}%
-        </h6>
-        <p className="mb-0 desc">Compared To April 2022</p>
-        <Link to={linkTo} className="see-statistics-link">
-          {linkTo === "/admin/orders" ? "View Orders" : `See ${title} Statistics`}
-        </Link>
-      </div>
-    </div>
-  )
+// const TotalStatistic =({title,value,comparisonText,comparisonPercentage,linkTo}) =>{
+//   const navigate = useNavigate();
+//   return(
+//     <div className="d-flex justify-content-between align-items-center flex-grow-1 bg-white p-3 rounded-3">
+//       <div>
+//         <p className="desc">{title}</p>
+//         <h4 className="mb-0 sub-title">${value}</h4>
+//       </div>
+//       <div className="d-flex flex-column align-items-end">
+//         <h6>
+//           {comparisonPercentage > 0 ? <BsArrowUpRight /> : <BsArrowDownRight />} {Math.abs(comparisonPercentage)}%
+//         </h6>
+//         <p className="mb-0 desc">Compared To April 2022</p>
+//         <Link to={linkTo} className="see-statistics-link">
+//           {linkTo === "/admin/orders" ? "View Orders" : `See ${title} Statistics`}
+//         </Link>
+//       </div>
+//     </div>
+//   )
   
-}
+// }
 
 function BasicTable() {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders.orders);
 
-  React.useEffect(() => {
-    if (!orders || orders.length === 0) {
-      dispatch(getOrders());
-    }
-  }, [dispatch, orders]);
+  React.useEffect(() =>{
+    dispatch(getOrders());
+  },[])
+
+  console.log(orders)
 
   const recentOrders = orders.slice(0, 10);
   console.log(recentOrders)
@@ -79,19 +78,20 @@ function BasicTable() {
         <TableBody>
           {recentOrders.map((row, index) => (
             <TableRow key={row._id}>
-              <TableCell component="th" scope="row">
+              <TableCell component="th" scope="row"  align="center">
                 {index + 1}
               </TableCell>
-              <TableCell>{row.shippingInfo.firstName}</TableCell>
-              <TableCell>
-                {row.orderedItems.map((item) => item.product).join(", ")}
+              <TableCell  align="center">{row.shippingInfo.firstName}</TableCell>
+              <TableCell  align="center">
+                {row.orderedItems.map((item) => item.product.title).join(", ")}
               </TableCell>
-              <TableCell>{row.totalPrice}</TableCell>
-              <TableCell>{formatDate(row.createdAt)}</TableCell>
+              <TableCell  align="center">{row.totalPrice}</TableCell>
+              <TableCell  align="center">{formatDate(row.createdAt)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Link to="/admin/orders" className="viewOrder" onClick={() => navigate("/orders")}> View Orders </Link>
     </TableContainer>
   );
 }
@@ -101,25 +101,76 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders.orders);
 
-  useEffect(() => {
-    if (!orders || orders.length === 0) {
-      dispatch(getOrders());
-    }
-  }, [dispatch, orders]);
+  React.useEffect(() =>{
+    dispatch(getOrders());
+  },[])
+  
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const currentYear = new Date().getFullYear();
 
   const monthlySalesData = orders.reduce((acc, order) => {
-    const monthYear = order.createdAt.substring(0, 7); // Extract YYYY-MM
-    acc[monthYear] = (acc[monthYear] || 0) + order.totalPrice;
+    if (order.OrderStatus === 'Delivered') {
+      const monthYear = order.createdAt.substring(0, 7); // Extract YYYY-MM
+      const [year, month] = monthYear.split('-'); // Split year and month
+  
+      const monthName = monthNames[Number(month) - 1]; // Map month number to month name
+      const formattedMonthYear = `${monthName} ${year}`; // Format to "Month Year"
+  
+      if (!acc[formattedMonthYear]) {
+        acc[formattedMonthYear] = 0;
+      }
+  
+      acc[formattedMonthYear] += order.totalPrice;
+    }
+  
     return acc;
   }, {});
-// console.log(monthlySalesData);
+    
+  const salesData = monthNames.map((monthName) => {
+    const formattedMonthYear = `${monthName} ${currentYear}`;
+    const sales = monthlySalesData[formattedMonthYear] || 0;
+    return {
+      type: formattedMonthYear,
+      sales: sales,
+    };
+  });
 
-  const salesData = Object.keys(monthlySalesData).map((monthYear) => ({
-    type: monthYear,
-    sales: monthlySalesData[monthYear],
-  }));
-  // console.log(salesData)
+  // Get the current date and month
+const currentDate = new Date();
+const currentMonth = currentDate.getMonth() + 1; // JavaScript months are zero-based
 
+// Filter orders for the current month with orderStatus "Delivered"
+const currentMonthDeliveredOrders = orders.filter(order => {
+  const orderDate = new Date(order.createdAt);
+  const orderMonth = orderDate.getMonth() + 1;
+  return orderMonth === currentMonth && order.OrderStatus === 'Delivered';
+});
+
+// Calculate the total sales for the current month from delivered orders
+const totalSalesCurrentMonth = currentMonthDeliveredOrders.reduce((total, order) => {
+  return total + order.totalPrice;
+}, 0);
+
+const previousMonth = currentMonth - 1 <= 0 ? 12 : currentMonth - 1;
+
+// Filter orders for the previous month with orderStatus "Delivered"
+const previousMonthDeliveredOrders = orders.filter(order => {
+  const orderDate = new Date(order.createdAt);
+  const orderMonth = orderDate.getMonth() + 1;
+  return orderMonth === previousMonth && order.OrderStatus === 'Delivered';
+});
+
+// Calculate the total sales for the previous month from delivered orders
+const previousMonthSales = previousMonthDeliveredOrders.reduce((total, order) => {
+  return total + order.totalPrice;
+}, 0);
+
+console.log('Total Sales for Previous Month (Delivered Orders):', previousMonthSales);
+      
   const salesConfig = {
     data: salesData, 
     xField: "type",
@@ -128,7 +179,8 @@ const Dashboard = () => {
     label: {
       position: "middle",
       style: {
-        fill: "#FFFFFF",
+        fill: "black",
+        fontWeight: "500",
         opacity: 1,
       },
     },
@@ -148,74 +200,151 @@ const Dashboard = () => {
     },
   };
 
-
-  const config2 = {
-    // data,
-    // xField: "type",
-    // yField: "sales",
-    // color: ({ type }) => {
-    //   return "#008000";
-    // },
-    // label: {
-    //   position: "middle",
-    //   style: {
-    //     fill: "#FFFFFF",
-    //     opacity: 1,
-    //   },
-    // },
-    // xAxis: {
-    //   label: {
-    //     autoHide: true,
-    //     autoRotate: false,
-    //   },
-    // },
-    // meta: {
-    //   type: {
-    //     alias: "Month",
-    //   },
-    //   sales: {
-    //     alias: "Income",
-    //   },
-    // },
+  const calculateTotalProfit = (orderedItems) => {
+    return orderedItems.reduce((totalProfit, item) => {
+      return totalProfit + item.product.profit * item.quantity;
+    }, 0);
   };
+  const totalProfit = orders.reduce((total, order) => {
+    if (order.OrderStatus === 'Delivered') {
+      return total + calculateTotalProfit(order.orderedItems);
+    }
+    return total;
+  }, 0);
+  console.log(totalProfit)
+  // Calculate monthly profits
+  const monthlyProfitData = orders.reduce((acc, order) => {
+    if (order.OrderStatus === 'Delivered') {
+      const monthYear = order.createdAt.substring(0, 7); // Extract YYYY-MM
+      const [year, month] = monthYear.split('-'); // Split year and month
+  
+      const monthName = monthNames[Number(month) - 1]; // Map month number to month name
+      const formattedMonthYear = `${monthName} ${year}`; // Format to "Month Year"
+  
+      if (!acc[formattedMonthYear]) {
+        acc[formattedMonthYear] = 0;
+      }
+  
+      acc[formattedMonthYear] += calculateTotalProfit(order.orderedItems);
+    }
+  
+    return acc;
+  }, {});
+  console.log(monthlyProfitData)
+
+  const profitData = monthNames.map((monthName) => {
+    const formattedMonthYear = `${monthName} ${currentYear}`;
+    const profit = monthlyProfitData[formattedMonthYear] || 0;
+    return {
+      type: formattedMonthYear,
+      profit: profit,
+    };
+  });
+
+  const totalProfitCurrentMonth = currentMonthDeliveredOrders.reduce((total, order) => {
+    return total + calculateTotalProfit(order.orderedItems);
+  }, 0);
+  
+  // Calculate the total profit for the previous month from delivered orders
+  const previousMonthProfit = previousMonthDeliveredOrders.reduce((total, order) => {
+    return total + calculateTotalProfit(order.orderedItems);
+  }, 0);
+
+  const profitConfig = {
+    data: profitData,
+    xField: "type",
+    yField: "profit",
+    color: "#2080ff",
+    label: {
+      position: "middle",
+      style: {
+        fill: "black",
+        fontWeight: "500",
+        opacity: 1,
+      },
+    },
+    xAxis: {
+      label: {
+        autoHide: true,
+        autoRotate: false,
+      },
+    },
+    meta: {
+      type: {
+        alias: "Month",
+      },
+      profit: {
+        alias: "Total Profit",
+      },
+    },
+  };
+  const totalSales = salesData.reduce((total, item) => total + item.sales, 0);
+  const totalOrder = orders.length
+  
+  let salesPercentChange = 0;
+
+if (previousMonthSales !== 0) {
+  salesPercentChange = ((totalSalesCurrentMonth - previousMonthSales) / previousMonthSales) * 100;
+}
+
+let profitPercentChange = 0;
+if (previousMonthProfit !== 0) {
+  profitPercentChange = ((totalProfitCurrentMonth - previousMonthProfit) / previousMonthProfit) * 100;
+}
+
+console.log(previousMonthProfit)
+console.log(totalProfitCurrentMonth)
+
+console.log('Percentage Change in Sales:', salesPercentChange.toFixed(2) + '%');
+console.log('Percentage Change in p:', profitPercentChange.toFixed(2) + '%');
 
   return (
     <div>
       <h3 className="mb-4 title">Dashboard</h3>
       <div className="d-flex justify-content-between align-items-center gap-3">
-        <TotalStatistic
-          title="Total Sales"
-          value="1100"
-          comparisonText="Compared To April 2022"
-          comparisonPercentage={32}
-          linkTo="#salesStates"
-        />
         <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
           <div>
             <p className="desc">Total Sales</p>
-            <h4 className="mb-0 sub-title">$1100</h4>
+            <h4 className="mb-0 sub-title">${totalSales}</h4>
           </div>
           <div className="d-flex flex-column align-items-end">
+          {previousMonthSales !== 0 && (
             <h6>
-              <BsArrowDownRight /> 32%
+              {salesPercentChange > 0 ? (
+                <BsArrowUpRight style={{ color: 'green' }} />
+              ) : (
+                <BsArrowDownRight style={{ color: 'red' }} />
+              )}{' '}
+              {Math.abs(salesPercentChange).toFixed(2)}%
             </h6>
-            <p className="mb-0  desc">Compared To April 2022</p>
-            <a href="#salesStates" className="see-statistics-link">
-              See Sales Statistics
-            </a>
-          </div>
+          )}
+          {previousMonthSales !== 0 && (
+            <p className="mb-0  desc">Compared To Previous Month</p>
+          )}
+          <a href="#salesStates" className="see-statistics-link">
+            See Sales Statistics
+          </a>
+        </div>
         </div>
         <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
-          <div>
-            <p className="desc">Total Revenue</p>
-            <h4 className="mb-0 sub-title">$1100</h4>
-          </div>
+        <div>
+          <p className="desc">Total Revenue</p>
+          <h4 className="mb-0 sub-title">${totalProfit}</h4>
+        </div>
           <div className="d-flex flex-column align-items-end">
-            <h6 className="red">
-              <BsArrowDownRight /> 32%
+          {previousMonthProfit !== 0 && (
+            <h6>
+              {profitPercentChange > 0 ? (
+                <BsArrowUpRight style={{ color: 'green' }} />
+              ) : (
+                <BsArrowDownRight style={{ color: 'red' }} />
+              )}{' '}
+              {Math.abs(profitPercentChange).toFixed(2)}%
             </h6>
-            <p className="mb-0  desc">Compared To April 2022</p>
-            <a href="#revStates" className="see-statistics-link">
+          )}
+            {previousMonthProfit !== 0 && (
+            <p className="mb-0  desc">Compared To Previous Month</p>
+          )}            <a href="#revStates" className="see-statistics-link">
               See Revenue Statistics
             </a>
           </div>
@@ -223,13 +352,9 @@ const Dashboard = () => {
         <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
           <div>
             <p className="desc">Total Orders</p>
-            <h4 className="mb-0 sub-title">1000</h4>
+            <h4 className="mb-0 sub-title">Total:{totalOrder}</h4>
           </div>
           <div className="d-flex flex-column align-items-end">
-            <h6 className="green">
-              <BsArrowUpRight /> 32%
-            </h6>
-            <p className="mb-0 desc">Compared To April 2022</p>
             <Link to="/admin/orders" className="see-statistics-link" onClick={() => navigate("/orders")}> View Orders </Link>
           </div>
         </div>
@@ -243,11 +368,15 @@ const Dashboard = () => {
       
       <div className="mt-4" id="salesStates">
         <h3 className="mb-5 title">Sales Statics</h3>
-          <ErrorBoundary>
-            <div>
-            {salesData.length > 0 ?<Column {...salesConfig} /> :<p>No data</p> }
-            </div>
-            </ErrorBoundary>
+        <ErrorBoundary>
+    <div>
+      {salesData && salesData.length > 0 ? (
+        <Column {...salesConfig} />
+      ) : (
+        <p>No data</p>
+      )}
+    </div>
+  </ErrorBoundary>
           
         
       </div>
@@ -255,7 +384,7 @@ const Dashboard = () => {
       <div className="mt-5" id="revStates">
         <h3 className="mb-5 title">Revenue Statics</h3>
         <div>
-          <Column {...config2} />
+          <Column {...profitConfig} />
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ const createCoupons = async (coupon) => {
 const updateCoupon = async (coupon) => {
   try {
     const response = await axios.put(
-      `${base_url}coupon/${coupon.id}`,
+      `${base_url}coupon/${coupon._id}`,
       {
         name: coupon.name,
         expiry: coupon.expiry,

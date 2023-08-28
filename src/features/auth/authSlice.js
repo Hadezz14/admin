@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authServices";
+import { config } from "../../utils/axiosconfig";
 
 const getUserfromLocalStorage = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user"))
@@ -49,6 +50,7 @@ export const blockUser = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       return await authService.blockUser(userId);
+      
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -60,6 +62,7 @@ export const unblockUser = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       return await authService.unblockUser(userId);
+      
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }

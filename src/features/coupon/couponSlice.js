@@ -43,9 +43,9 @@ export const getACoupon = createAsyncThunk(
 );
 export const updateACoupon = createAsyncThunk(
   "coupon/update-coupon",
-  async (couponID, thunkAPI) => {
+  async (selectedCoupon, thunkAPI) => {
     try {
-      return await couponService.updateCoupon(couponID);
+      return await couponService.updateCoupon(selectedCoupon);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -136,6 +136,9 @@ export const couponSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.updatedCoupon = action.payload;
+        state.coupons = state.coupons.map((coupon) =>
+          coupon._id === action.payload._id ? action.payload : coupon
+        );
       })
       .addCase(updateACoupon.rejected, (state, action) => {
         state.isLoading = false;
