@@ -301,9 +301,9 @@ console.log('Percentage Change in p:', profitPercentChange.toFixed(2) + '%');
   return (
     <div>
       <h3 className="mb-4 title">Dashboard</h3>
-      <div className="d-flex justify-content-between align-items-center gap-3">
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
-          <div>
+      <div className="d-flex flex-wrap gap-3">
+        <div className="dashboard-stat-container">
+          <div >
             <p className="desc">Total Sales</p>
             <h4 className="mb-0 sub-title">${totalSales}</h4>
           </div>
@@ -326,7 +326,7 @@ console.log('Percentage Change in p:', profitPercentChange.toFixed(2) + '%');
           </a>
         </div>
         </div>
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
+        <div className="dashboard-stat-container">
         <div>
           <p className="desc">Total Revenue</p>
           <h4 className="mb-0 sub-title">${totalProfit}</h4>
@@ -349,7 +349,7 @@ console.log('Percentage Change in p:', profitPercentChange.toFixed(2) + '%');
             </a>
           </div>
         </div>
-        <div className="d-flex justify-content-between align-items-end flex-grow-1 bg-white p-3 roudned-3">
+        <div className="dashboard-stat-container">
           <div>
             <p className="desc">Total Orders</p>
             <h4 className="mb-0 sub-title">Total:{totalOrder}</h4>
