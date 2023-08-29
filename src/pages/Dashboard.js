@@ -22,7 +22,7 @@ class ErrorBoundary extends React.Component{
   }
 }
 // const TotalStatistic =({title,value,comparisonText,comparisonPercentage,linkTo}) =>{
-//   const navigate = useNavigate();
+  // const navigate = useNavigate();
 //   return(
 //     <div className="d-flex justify-content-between align-items-center flex-grow-1 bg-white p-3 rounded-3">
 //       <div>
@@ -91,7 +91,7 @@ function BasicTable() {
           ))}
         </TableBody>
       </Table>
-      <Link to="/admin/orders" className="viewOrder" onClick={() => navigate("/orders")}> View Orders </Link>
+      <Link to="/admin/orders" className="viewOrder" > View Orders </Link>
     </TableContainer>
   );
 }
@@ -355,7 +355,7 @@ console.log('Percentage Change in p:', profitPercentChange.toFixed(2) + '%');
             <h4 className="mb-0 sub-title">Total:{totalOrder}</h4>
           </div>
           <div className="d-flex flex-column align-items-end">
-            <Link to="/admin/orders" className="see-statistics-link" onClick={() => navigate("/orders")}> View Orders </Link>
+            <Link to="/admin/orders" className="see-statistics-link" > View Orders </Link>
           </div>
         </div>
       </div>
