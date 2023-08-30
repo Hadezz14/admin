@@ -5,6 +5,8 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../features/auth/authSlice";
+import vyamLoginPage from "../imgs/vyam.png";
+
 
 let schema = yup.object().shape({
   email: yup
@@ -38,13 +40,22 @@ const Login = () => {
     }
   }, [user, isError, isSuccess, isLoading]);
   return (
-    <div className="py-5" style={{ background: "#ffd333", minHeight: "100vh" }}>
+    <div
+      className="login-container"
+      style={{
+        backgroundImage: `url(${vyamLoginPage})`,
+        backgroundSize: "contain", // Adjust this property
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center center",
+        minHeight: "100vh",
+        backgroundColor: "#1E1E1E"
+      }}
+    >  <br />
       <br />
       <br />
       <br />
       <br />
-      <br />
-      <div className="my-5 w-25 bg-white rounded-3 mx-auto p-4">
+      <div className="loginForm rounded-3 mx-auto p-4">
         <h3 className="text-center title">Login</h3>
         <p className="text-center">Login to your account to continue.</p>
         <div className="error text-center">

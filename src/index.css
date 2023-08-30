@@ -22,6 +22,15 @@ body {
   height: 10rem;
   margin-left: 0.4rem;
 }
+
+.loginForm {
+  width: 100%;
+  max-width: 400px; 
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
 .ant-layout {
   min-height: 100vh;
 }
@@ -137,4 +146,47 @@ main::-webkit-scrollbar {
 .selected-color{
   display: flex;
   margin-bottom: 0.7rem;
+}
+
+
+
+.dashboard-stat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-stat-container h4 {
+  margin-top: 0.5rem;
+}
+
+.dashboard-stat-container .see-statistics-link {
+  margin-top: 0.5rem;
+}
+
+
+
+/* meida queries */
+
+@media (max-width: 768px) {
+  .d-flex {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 768px) {
+  .d-flex {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 767px) {
+  .loginForm {
+    padding: 15px;
+  }
 }
