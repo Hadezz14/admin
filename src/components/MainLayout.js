@@ -26,7 +26,9 @@ const MainLayout = () => {
   } = theme.useToken();
   const navigate = useNavigate();
   return (
-    <Layout /* onContextMenu={(e) => e.preventDefault()} */>
+    <Layout 
+    /* onContextMenu={(e) => e.preventDefault()} */
+    >
       <Sider trigger={null} collapsible collapsed={collapsed}>
       <div className="logo">
         {collapsed ? (
