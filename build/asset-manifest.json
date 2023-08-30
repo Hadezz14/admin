@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.45cd9a4b.css",
-    "main.js": "/static/js/main.378e7ba2.js",
+    "main.css": "/static/css/main.e9179258.css",
+    "main.js": "/static/js/main.58e28457.js",
+    "static/media/vyam.png": "/static/media/vyam.8e4a24a9c0bb76904d3c.png",
     "static/media/VyamHeadLogo.png": "/static/media/VyamHeadLogo.0a267fcead88dd849366.png",
     "static/media/vyamLogo.png": "/static/media/vyamLogo.d3a5859a7c716c2138ba.png",
     "index.html": "/index.html",
-    "main.45cd9a4b.css.map": "/static/css/main.45cd9a4b.css.map",
-    "main.378e7ba2.js.map": "/static/js/main.378e7ba2.js.map"
+    "main.e9179258.css.map": "/static/css/main.e9179258.css.map",
+    "main.58e28457.js.map": "/static/js/main.58e28457.js.map"
   },
   "entrypoints": [
-    "static/css/main.45cd9a4b.css",
-    "static/js/main.378e7ba2.js"
+    "static/css/main.e9179258.css",
+    "static/js/main.58e28457.js"
   ]
 }
