@@ -1,18 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import uploadService from "./uploadService";
+import { async } from "q";
 
 export const uploadImg = createAsyncThunk(
   "upload/images",
   async (data, thunkAPI) => {
     try {
+      // console.log(data);
       const formData = new FormData();
-
       for (let i = 0; i < data.length; i++) {
-        console.log(data[i])
-        formData.append("images", data[i]);
-        console.log("second fm",formData)
+        // console.log("Appending image:" ,data[i]);
+        formData.append("images",data[i]);
+        
       }
-      
+      // console.log(formData);
       return await uploadService.uploadImg(formData);
     } catch (error) {
 
@@ -20,6 +21,7 @@ export const uploadImg = createAsyncThunk(
     }
   }
 );
+
 export const delImg = createAsyncThunk(
   "delete/images",
   async (id, thunkAPI) => {
@@ -38,7 +40,7 @@ const initialState = {
   message: "",
 };
 export const uploadSlice = createSlice({
-  name: "imaegs",
+  name: "images",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -50,13 +52,13 @@ export const uploadSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.images = action.payload;
+        state.images =[...state.images, ...action.payload];
       })
       .addCase(uploadImg.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.pay;
+        state.message = action.payload;
       })
       .addCase(delImg.pending, (state) => {
         state.isLoading = true;
@@ -65,7 +67,7 @@ export const uploadSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.images = [];
+        state.images = state.images.filter((image) => image.id !== action.payload.id);
       })
       .addCase(delImg.rejected, (state, action) => {
         state.isLoading = false;

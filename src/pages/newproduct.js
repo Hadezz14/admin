@@ -50,6 +50,7 @@ const Newproduct = () => {
   const catState = useSelector((state) => state.pCategory.pCategories);
  
   const imgState = useSelector((state) => state.upload.images);
+  console.log(imgState);
   const newProduct = useSelector((state) => state.product);
   const { isSuccess, isError, isLoading, createdProduct } = newProduct;
   useEffect(() => {
@@ -255,11 +256,12 @@ const Newproduct = () => {
           <div className="bg-white border-1 p-5 text-center">
             <Dropzone
               onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
+              
             >
               {({ getRootProps, getInputProps }) => (
                 <section>
                   <div {...getRootProps()}>
-                    <input {...getInputProps()} />
+                    <input {...getInputProps()} multiple />
                     <p>
                       Drag 'n' drop some files here, or click to select files
                     </p>
