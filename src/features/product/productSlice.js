@@ -42,6 +42,27 @@ export const deleteProduct = createAsyncThunk(
     }
   }
 );
+export const updateProductDiscount = createAsyncThunk(
+  "product/discount",
+  async ({ productIds, discount }, thunkAPI) => {
+    try {
+      return await productService.updateProductDiscount(productIds, discount);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteDiscount = createAsyncThunk(
+  "product/delete-discount",
+  async (productIds, thunkAPI) => {
+    try {
+      return await productService.deleteDiscount(productIds);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 
 export const resetState = createAction("Reset_all");
 
@@ -121,7 +142,36 @@ export const productSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
-      .addCase(resetState, () => initialState);
-  },
-});
+      .addCase(resetState, () => initialState)
+      .addCase(updateProductDiscount.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateProductDiscount.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+      })
+      .addCase(updateProductDiscount.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })      
+
+      .addCase(deleteDiscount.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteDiscount.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+      })
+      .addCase(deleteDiscount.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      });
+    },
+  });
 export default productSlice.reducer;

@@ -292,22 +292,18 @@ if (previousMonthProfit !== 0) {
   profitPercentChange = ((totalProfitCurrentMonth - previousMonthProfit) / previousMonthProfit) * 100;
 }
 
-console.log(previousMonthProfit)
-console.log(totalProfitCurrentMonth)
-
-console.log('Percentage Change in Sales:', salesPercentChange.toFixed(2) + '%');
-console.log('Percentage Change in p:', profitPercentChange.toFixed(2) + '%');
 
   return (
     <div>
       <h3 className="mb-4 title">Dashboard</h3>
       <div className="d-flex flex-wrap gap-3">
-        <div className="dashboard-stat-container">
-          <div >
-            <p className="desc">Total Sales</p>
-            <h4 className="mb-0 sub-title">${totalSales}</h4>
-          </div>
-          <div className="d-flex flex-column align-items-end">
+      <div className="dashboard-stat-container">
+        <div className="d-flex justify-content-between align-items-center">
+           <div className=" align-items-start">
+             <p className="desc">Total Sales</p>
+             <h4 className="mb-0 sub-title">${totalSales}</h4>
+           </div>
+           <div className="d-flex flex-column align-items-end">
           {previousMonthSales !== 0 && (
             <h6>
               {salesPercentChange > 0 ? (
@@ -318,15 +314,17 @@ console.log('Percentage Change in p:', profitPercentChange.toFixed(2) + '%');
               {Math.abs(salesPercentChange).toFixed(2)}%
             </h6>
           )}
-          {previousMonthSales !== 0 && (
+            {previousMonthSales !== 0 && (
             <p className="mb-0  desc">Compared To Previous Month</p>
-          )}
-          <a href="#salesStates" className="see-statistics-link">
-            See Sales Statistics
-          </a>
-        </div>
-        </div>
-        <div className="dashboard-stat-container">
+          )}            <a href="#salesStates" className="see-statistics-link">
+              See Sales Statistics
+            </a>
+            </div>
+      </div>
+      </div>
+
+      <div className="dashboard-stat-container">
+        <div className="d-flex justify-content-between align-items-center">
         <div>
           <p className="desc">Total Revenue</p>
           <h4 className="mb-0 sub-title">${totalProfit}</h4>
@@ -347,15 +345,18 @@ console.log('Percentage Change in p:', profitPercentChange.toFixed(2) + '%');
           )}            <a href="#revStates" className="see-statistics-link">
               See Revenue Statistics
             </a>
+            </div>
           </div>
         </div>
         <div className="dashboard-stat-container">
+        <div className="d-flex justify-content-between align-items-center">
           <div>
             <p className="desc">Total Orders</p>
             <h4 className="mb-0 sub-title">Total:{totalOrder}</h4>
           </div>
-          <div className="d-flex flex-column align-items-end">
+          <div className="align-items-end">
             <Link to="/admin/orders" className="see-statistics-link" > View Orders </Link>
+          </div>
           </div>
         </div>
       </div>

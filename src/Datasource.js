@@ -79,7 +79,7 @@ export const rows = [
       headerName: 'Colors',
       width: 120,
       renderCell: (params) => {
-        const colors = params.value; // Assuming params.value is an array of colors
+        const colors = params.value;
         return (
           <div>
             {colors.map((color, index) => (
@@ -91,6 +91,16 @@ export const rows = [
     },
     { field: 'quantity', headerName: 'Quantity', width: 100 },
     { field: 'price', headerName: 'Price', width: 100 },
+    {
+      field: 'discount',
+      headerName: 'Discount',
+      width: 120,
+      renderCell: (params) => {
+        const discount = params.value;
+        const displayDiscount = discount ? `${discount}%` : 'No discount';
+        return <div>{displayDiscount}</div>;
+      },
+    },
   ];
 
  export const Categorycolumns = [
@@ -101,7 +111,23 @@ export const rows = [
     { field: 'id', headerName: 'SN', width: 20 },
     { field: 'name', headerName: ' Name', width: 130 },
     { field: 'discount', headerName: ' Discount', width: 130 },
-    { field: 'expiry', headerName: ' Expiry Date', width: 130 },];
+    {
+      field: 'expiry',
+      headerName: 'Expiry Date',
+      width: 190,
+      valueFormatter: (params) => {
+        const createdAtDate = new Date(params.value);
+        const options = {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        };
+        return createdAtDate.toLocaleString(undefined, options);
+      },
+    },,];
   
 export const Enquirycolumns = [
     { field: 'name', headerName: ' Name', width: 130 },

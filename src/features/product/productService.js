@@ -42,16 +42,44 @@ const updateProduct = async (product) => {
 
 
 const deleteProduct = async (product) => {
-  console.log(product)
   const response = await axios.delete(`${base_url}product/${product._id}`, config);
   return response.data;
 };
+
+const updateProductDiscount = async (productIds, discount) => {
+  try {
+    const response = await axios.put(
+      `${base_url}product/discount`,
+      { productIds: productIds,
+        discount: discount },
+      config
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteDiscount = async (productIds) => {
+  try {
+    const response = await axios.delete(`${base_url}product/delete-discount`, {
+      data: { productIds: productIds },
+      ...config,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 const productService = {
   getProducts,
   createProduct,
   deleteProduct,
   updateProduct,
+  updateProductDiscount,
+  deleteDiscount
 };
 
 export default productService;

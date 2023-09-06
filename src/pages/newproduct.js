@@ -39,8 +39,7 @@ const Newproduct = () => {
   const navigate = useNavigate();
   const [currentColor, setCurrentColor] = useState("#ffffff");
 
-  const [images, setImages] = useState([]);
-  console.log(currentColor)
+  const [isUploading, setIsUploading] = useState(false);
   
   useEffect(() => {
     dispatch(getBrands());
@@ -48,9 +47,7 @@ const Newproduct = () => {
     dispatch(getColors());
   }, []);
 
-  const brandState = useSelector((state) => state.brand.brands);
   const catState = useSelector((state) => state.pCategory.pCategories);
-  const colorState = useSelector((state) => state.color.colors);
  
   const imgState = useSelector((state) => state.upload.images);
   const newProduct = useSelector((state) => state.product);
@@ -204,49 +201,46 @@ const Newproduct = () => {
             {formik.touched.category && formik.errors.category}
           </div>
           <div>
-  <label htmlFor="color">Select Colors:</label>
-  <div className="color-picker-container">
-    <SketchPicker
-      color={currentColor}
-      onChange={(color) => {
-        setCurrentColor(color.hex);
-      }}
-    />
-    <button
-      className="btn btn-primary"
-      onClick={() => {
-        formik.setFieldValue("color", [
-          ...formik.values.color,
-          currentColor
-        ]);
-        setCurrentColor("#ffffff"); // Reset the color picker
-      }}
-    >
-      Add Color
-    </button>
-  </div>
-  <div className="selected-colors">
-            {formik.values.color.map((color, index) => (
-              <div key={index} className="selected-color">
-                <ColorBadge color={color} />
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => {
-                    const updatedColors = formik.values.color.filter(
-                      (c, i) => i !== index
-                    );
-                    formik.setFieldValue("color", updatedColors);
-                  }}
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+            <label htmlFor="color">Select Colors:</label>
+            <div className="color-picker-container">
+              <SketchPicker
+                color={currentColor}
+                onChange={(color) => {
+                  setCurrentColor(color.hex);
+                }}
+              />
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  formik.setFieldValue("color", [
+                    ...formik.values.color,
+                    currentColor
+                  ]);
+                  setCurrentColor("#ffffff"); // Reset the color picker
+                }}
+              >
+                Add Color
+              </button>
           </div>
-</div>
-
-
-
+          <div className="selected-colors">
+                    {formik.values.color.map((color, index) => (
+                      <div key={index} className="selected-color">
+                        <ColorBadge color={color} />
+                        <button
+                          className="btn btn-danger btn-sm"
+                            onClick={() => {
+                            const updatedColors = formik.values.color.filter(
+                              (c, i) => i !== index
+                            );
+                            formik.setFieldValue("color", updatedColors);
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+            </div>
           <CustomInput
             type="number"
             label="Enter Product Quantity"

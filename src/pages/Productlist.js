@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteProduct, getProducts, updateProduct } from '../features/product/productSlice';
+import { deleteDiscount, deleteProduct, getProducts, updateProduct, updateProductDiscount } from '../features/product/productSlice';
 import { ColorBadge, Productcolumns } from '../Datasource';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -18,11 +18,16 @@ const DataTable = () => {
   const [productData, setEditedProduct] = useState(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentColor, setCurrentColor] = useState("#ffffff");
+  const [isDiscountFormOpen, setIsDiscountFormOpen] = useState(false);
+  const [discountValue, setDiscountValue] = useState("");
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
+
+
+
   
   React.useEffect(() => {
     dispatch(getProducts());
   }, []);
-  console.log(products)
   const handleEditProduct = (params) => {
     
     const productData = products.find((product) => product._id === params.id);
@@ -49,7 +54,28 @@ const DataTable = () => {
   const handleDeleteProduct = () => {
     dispatch(deleteProduct(productData));
   };
+
+
+  const openDiscountForm = () => {
+    setIsDiscountFormOpen(true);
+  };
   
+  const closeDiscountForm = () => {
+    setIsDiscountFormOpen(false);
+    setDiscountValue(""); 
+  };
+  
+  const handleDeleteDiscount = () => {
+    if (selectedProductIds.length === 0) {
+      alert("No products selected. Please select products to remove discounts.");
+    } else {
+      dispatch(deleteDiscount(selectedProductIds));
+    }
+  };
+  
+  
+
+  // console.log(selectedProductIds);
 
 
       const actionColumn = [
@@ -87,12 +113,24 @@ const DataTable = () => {
           rows={products}
           columns={(Productcolumns || []).concat(actionColumn)}
           loading={isLoading}
-          
           pagination
-          pageSize={5}
+          pageSize={10}
+          pageSizeOptions={[5, 10]}
           checkboxSelection
           getRowId={(row ) => row._id}
+          onRowSelectionModelChange={(ids) => {
+            console.log(ids)
+            setSelectedProductIds(ids);
+          }}
         />
+       <div className="disBtns">
+        <button className="btn btn-primary" onClick={() => {
+             
+             openDiscountForm();
+           }}
+          >Add Discount</button>
+        <button className="btn btn-danger" onClick={handleDeleteDiscount} >Remove Discount</button>
+       </div>
       </div>
       <Dialog open={isEditFormOpen} onClose={handleFormClose}>
         <DialogTitle>Edit Product</DialogTitle>
@@ -149,7 +187,6 @@ const DataTable = () => {
                 ...prevProduct,
                 color: [...prevProduct.color, currentColor],
               }));
-              // setCurrentColor("#ffffff"); // Reset the color picker
             }}
           >
             Add Color
@@ -188,6 +225,42 @@ const DataTable = () => {
         <DialogActions>
           <Button onClick={handleFormClose}>Cancel</Button>
           <Button onClick={handleUpdateProduct}>Update</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={isDiscountFormOpen} onClose={closeDiscountForm}>
+        <DialogTitle>Add Discount</DialogTitle>
+        <DialogContent>
+          <form className="form-container">
+            <div>
+              <label>Discount Value:</label>
+              <input
+                type="text"
+                value={discountValue}
+                onChange={(e) => setDiscountValue(e.target.value)}
+                placeholder="in percentage %"
+              />
+            </div>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDiscountForm}>Cancel</Button>
+          <Button
+           onClick={async () => {
+             try {
+               const discount = parseFloat(discountValue);
+               if (isNaN(discount) || discount < 1 || discount > 100) {
+                 alert('Invalid discount value. Please enter a number between 1 and 100.');
+                 return;
+               }             
+               await dispatch(updateProductDiscount({ productIds: selectedProductIds, discount }));             
+               closeDiscountForm();
+             } catch (error) {
+               console.error('Error adding discount:', error);
+             }
+           }}
+        >
+  Add
+</Button>
         </DialogActions>
       </Dialog>
     </>

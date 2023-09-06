@@ -34,11 +34,21 @@ const AddCoupon = () => {
     couponExpiry,
     updatedCoupon,
   } = newCoupon;
-  const changeDateFormet = (date) => {
-    const newDate = new Date(date).toLocaleDateString();
-    const [month, day, year] = newDate.split("/");
-    return [year, month, day].join("-");
-  };
+  // const changeDateFormet = (date) => {
+  //   if (date) {
+  //     // Parse the date string in UTC format
+  //     const utcDate = new Date(date);
+  
+  //     // Convert the UTC date to the user's local time
+  //     const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+  
+  //     // Format the local date as a string
+  //     const formattedDate = localDate.toISOString().substring(0, 16);
+      
+  //     return formattedDate;
+  //   }
+  //   return "";
+  // };
 
   useEffect(() => {
     if (getCouponId !== undefined) {
@@ -64,7 +74,7 @@ const AddCoupon = () => {
     enableReinitialize: true,
     initialValues: {
       name: couponName || "",
-      expiry: changeDateFormet(couponExpiry) || "",
+      expiry: couponExpiry || "",
       discount: couponDiscount || "",
     },
     validationSchema: schema,
@@ -103,13 +113,13 @@ const AddCoupon = () => {
             {formik.touched.name && formik.errors.name}
           </div>
           <CustomInput
-            type="date"
+            type="datetime-local" // Change the input type to datetime-local
             name="expiry"
             onChng={formik.handleChange("expiry")}
             onBlr={formik.handleBlur("expiry")}
-            val={formik.values.expiry}
-            label="Enter Expiry Data"
-            id="date"
+            // val={changeDateFormet(formik.values.expiry)} // Format the date
+            label="Enter Expiry Date and Time"
+            id="expiry"
           />
           <div className="error">
             {formik.touched.expiry && formik.errors.expiry}

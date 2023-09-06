@@ -21,6 +21,7 @@ import logo2 from '../imgs/VyamHeadLogo.png'
 const { Header, Sider, Content } = Layout;
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -89,23 +90,23 @@ const MainLayout = () => {
               icon: <FaClipboardList className="fs-4" />,
               label: "Orders",
             },
-            {
-              key: "marketing",
-              icon: <RiCouponLine className="fs-4" />,
-              label: "Marketing",
-              children: [
-                {
-                  key: "coupon",
-                  icon: <ImBlog className="fs-4" />,
-                  label: "Add Coupon",
-                },
-                {
-                  key: "coupon-list",
-                  icon: <RiCouponLine className="fs-4" />,
-                  label: "Coupon List",
-                },
-              ],
-            },
+            // {
+            //   key: "marketing",
+            //   icon: <RiCouponLine className="fs-4" />,
+            //   label: "Marketing",
+            //   children: [
+            //     {
+            //       key: "coupon",
+            //       icon: <ImBlog className="fs-4" />,
+            //       label: "Add Coupon",
+            //     },
+            //     {
+            //       key: "coupon-list",
+            //       icon: <RiCouponLine className="fs-4" />,
+            //       label: "Coupon List",
+            //     },
+            //   ],
+            // },
             
             {
               key: "enquiries",
