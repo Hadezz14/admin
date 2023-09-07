@@ -1,3 +1,5 @@
+export const base_url ="https://vyam-backend.onrender.com/api/";
+
 const getTokenFromLocalStorage = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user"))
   : null;
