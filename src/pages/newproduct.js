@@ -39,7 +39,7 @@ const Newproduct = () => {
   const navigate = useNavigate();
   const [currentColor, setCurrentColor] = useState("#ffffff");
 
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   
   useEffect(() => {
     dispatch(getBrands());
@@ -254,24 +254,34 @@ const Newproduct = () => {
             {formik.touched.quantity && formik.errors.quantity}
           </div>
           <div className="bg-white border-1 p-5 text-center">
-            <Dropzone
-              onDrop={(acceptedFiles) => dispatch(uploadImg(acceptedFiles))}
-              
-            >
-              {({ getRootProps, getInputProps }) => (
-                <section>
-                  <div {...getRootProps()}>
-                    <input {...getInputProps()} multiple />
-                    <p>
-                      Drag 'n' drop some files here, or click to select files
-                    </p>
-                  </div>
-                </section>
-              )}
-            </Dropzone>
-          </div>
+          <Dropzone
+            onDrop={(acceptedFiles) => {
+              setIsUploadingImage(true); 
+              dispatch(uploadImg(acceptedFiles))
+                .then(() => {
+                  setIsUploadingImage(false);
+                })
+                .catch(() => {
+                  setIsUploadingImage(false); 
+                });
+            }}
+          >
+            {({ getRootProps, getInputProps }) => (
+              <section>
+                <div {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  {!isUploadingImage && (
+            <p>Drag 'n' drop some files here, or click to select files</p>
+          )}
+          {isUploadingImage && <p>Uploading...</p>} {/* Show loading indicator */}
+        </div>
+      </section>
+            )}
+          </Dropzone>
+        </div>
           <div className="showimages d-flex flex-wrap gap-3">
             {imgState?.map((i, j) => {
+              console.log(i.public_id)
               return (
                 <div className=" position-relative" key={j}>
                   <button

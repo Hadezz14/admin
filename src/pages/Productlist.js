@@ -12,6 +12,11 @@ import '../index.css'
 import { SketchPicker } from 'react-color';
 
 const DataTable = () => {
+
+  React.useEffect(() => {
+    dispatch(getProducts());
+  }, []);
+
   const dispatch = useDispatch();
   const products = useSelector((state) => state.product.products);
   const isLoading = useSelector((state) => state.product.isLoading);
@@ -25,9 +30,7 @@ const DataTable = () => {
 
 
   
-  React.useEffect(() => {
-    dispatch(getProducts());
-  }, []);
+  
   const handleEditProduct = (params) => {
     
     const productData = products.find((product) => product._id === params.id);
@@ -51,11 +54,23 @@ const DataTable = () => {
     
   };
 
-  const handleDeleteProduct = () => {
-    dispatch(deleteProduct(productData));
+  const handleDeleteProduct = (params) => {
+    
+    try {
+      const productData = products.find((product) => product._id === params.id);
+      console.log(productData)
+      dispatch(deleteProduct(productData))
+        .then(() => {
+          dispatch(getProducts());
+        })
+        .catch((error) => {
+          console.log("Error deleting Product", error);
+        });
+    } catch (error) {
+      console.log("Error deleting Product", error);
+    }
   };
-
-
+  
   const openDiscountForm = () => {
     setIsDiscountFormOpen(true);
   };
@@ -94,10 +109,11 @@ const DataTable = () => {
               Edit
             </button>
             <button
-              type="button"
-              className="btn btn-danger"
-              onClick={() => handleDeleteProduct(params.id)}
-            >
+            type="button"
+            className="btn btn-danger"
+            onClick={() => handleDeleteProduct(params)}
+
+          >
               Delete
             </button>
           </div>

@@ -21,27 +21,7 @@ class ErrorBoundary extends React.Component{
     return this.props.children;
   }
 }
-// const TotalStatistic =({title,value,comparisonText,comparisonPercentage,linkTo}) =>{
-  // const navigate = useNavigate();
-//   return(
-//     <div className="d-flex justify-content-between align-items-center flex-grow-1 bg-white p-3 rounded-3">
-//       <div>
-//         <p className="desc">{title}</p>
-//         <h4 className="mb-0 sub-title">${value}</h4>
-//       </div>
-//       <div className="d-flex flex-column align-items-end">
-//         <h6>
-//           {comparisonPercentage > 0 ? <BsArrowUpRight /> : <BsArrowDownRight />} {Math.abs(comparisonPercentage)}%
-//         </h6>
-//         <p className="mb-0 desc">Compared To April 2022</p>
-//         <Link to={linkTo} className="see-statistics-link">
-//           {linkTo === "/admin/orders" ? "View Orders" : `See ${title} Statistics`}
-//         </Link>
-//       </div>
-//     </div>
-//   )
-  
-// }
+
 
 function BasicTable() {
   const dispatch = useDispatch();
@@ -68,7 +48,7 @@ function BasicTable() {
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Sn</TableCell>
+            <TableCell align="center">Sn</TableCell>
             <TableCell align="center">User Name</TableCell>
             <TableCell align="center">Product</TableCell>
             <TableCell align="center">Amount</TableCell>
@@ -83,7 +63,7 @@ function BasicTable() {
               </TableCell>
               <TableCell  align="center">{row.shippingInfo.firstName}</TableCell>
               <TableCell  align="center">
-                {row.orderedItems.map((item) => item.product.title).join(", ")}
+                {row.orderedItems.map((item) => item.productName).join(", ")}
               </TableCell>
               <TableCell  align="center">{row.totalPrice}</TableCell>
               <TableCell  align="center">{formatDate(row.createdAt)}</TableCell>
@@ -97,7 +77,7 @@ function BasicTable() {
 }
 
 
-const Dashboard = () => {
+const Dashboard = ({ }) => {
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.orders.orders);
 
@@ -105,7 +85,7 @@ const Dashboard = () => {
     dispatch(getOrders());
   },[])
   
-
+  
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -200,19 +180,7 @@ console.log('Total Sales for Previous Month (Delivered Orders):', previousMonthS
     },
   };
 
-  const calculateTotalProfit = (orderedItems) => {
-    return orderedItems.reduce((totalProfit, item) => {
-      return totalProfit + item.product.profit * item.quantity;
-    }, 0);
-  };
-  const totalProfit = orders.reduce((total, order) => {
-    if (order.OrderStatus === 'Delivered') {
-      return total + calculateTotalProfit(order.orderedItems);
-    }
-    return total;
-  }, 0);
-  console.log(totalProfit)
-  // Calculate monthly profits
+  
   const monthlyProfitData = orders.reduce((acc, order) => {
     if (order.OrderStatus === 'Delivered') {
       const monthYear = order.createdAt.substring(0, 7); // Extract YYYY-MM
@@ -225,12 +193,11 @@ console.log('Total Sales for Previous Month (Delivered Orders):', previousMonthS
         acc[formattedMonthYear] = 0;
       }
   
-      acc[formattedMonthYear] += calculateTotalProfit(order.orderedItems);
+      acc[formattedMonthYear] += order.profit;
     }
   
     return acc;
   }, {});
-  console.log(monthlyProfitData)
 
   const profitData = monthNames.map((monthName) => {
     const formattedMonthYear = `${monthName} ${currentYear}`;
@@ -242,12 +209,12 @@ console.log('Total Sales for Previous Month (Delivered Orders):', previousMonthS
   });
 
   const totalProfitCurrentMonth = currentMonthDeliveredOrders.reduce((total, order) => {
-    return total + calculateTotalProfit(order.orderedItems);
+    return total + order.profit
   }, 0);
   
   // Calculate the total profit for the previous month from delivered orders
   const previousMonthProfit = previousMonthDeliveredOrders.reduce((total, order) => {
-    return total + calculateTotalProfit(order.orderedItems);
+    return total + order.profit
   }, 0);
 
   const profitConfig = {
@@ -279,6 +246,7 @@ console.log('Total Sales for Previous Month (Delivered Orders):', previousMonthS
     },
   };
   const totalSales = salesData.reduce((total, item) => total + item.sales, 0);
+  const totalProfit = profitData.reduce((total, item) => total + item.profit, 0);
   const totalOrder = orders.length
   
   let salesPercentChange = 0;
@@ -299,9 +267,9 @@ if (previousMonthProfit !== 0) {
       <div className="d-flex flex-wrap gap-3">
       <div className="dashboard-stat-container">
         <div className="d-flex justify-content-between align-items-center">
-           <div className=" align-items-start">
+           <div>
              <p className="desc">Total Sales</p>
-             <h4 className="mb-0 sub-title">${totalSales}</h4>
+             <h4 className="mb-0 sub-title">NPR: {totalSales}</h4>
            </div>
            <div className="d-flex flex-column align-items-end">
           {previousMonthSales !== 0 && (
@@ -327,7 +295,7 @@ if (previousMonthProfit !== 0) {
         <div className="d-flex justify-content-between align-items-center">
         <div>
           <p className="desc">Total Revenue</p>
-          <h4 className="mb-0 sub-title">${totalProfit}</h4>
+          <h4 className="mb-0 sub-title">NPR: {totalProfit}</h4>
         </div>
           <div className="d-flex flex-column align-items-end">
           {previousMonthProfit !== 0 && (

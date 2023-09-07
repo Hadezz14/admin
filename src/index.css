@@ -175,19 +175,19 @@ main::-webkit-scrollbar {
 
 /* meida queries */
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .d-flex {
     flex-direction: column;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 800px) {
   .d-flex {
     flex-direction: row;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .dashboard-stat-container {
     text-align: center; /* Center-align content */
   }
@@ -201,5 +201,33 @@ main::-webkit-scrollbar {
 @media (max-width: 767px) {
   .loginForm {
     padding: 15px;
+  }
+}
+
+
+/* Add these styles to your CSS file or style tag */
+@media (max-width: 1380px) {
+  .dashboard-stat-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-stat-container .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+  }
+  .d-flex.flex-column.align-items-end{
+    align-items: center !important;
+  }
+  .dashboard-stat-container .d-flex.justify-content-between.align-items-center .desc,
+  .dashboard-stat-container .d-flex.justify-content-between.align-items-center .sub-title {
+    text-align: center !important;
+  }
+
+  .dashboard-stat-container .d-flex.justify-content-between.align-items-center h6 {
+    margin-top: 8px;
+  }
+
+  .dashboard-stat-container .d-flex.justify-content-between.align-items-center p {
+    margin-top: 4px;
   }
 }

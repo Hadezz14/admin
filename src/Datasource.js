@@ -34,7 +34,7 @@ export const rows = [
   export const OrderColumn = [
     { field: 'id', headerName: 'Order ID', width: 210},
     { field: 'orderedItems', headerName: 'Orders', width: 150 },
-    { field: 'quantity', headerName: 'Sold Quantity', width: 90 },
+    { field: 'quantity', headerName: 'Sold Quantity', width: 100, align: "center" },
     { field: 'orderStatus', headerName: 'Status', width: 120 },
     { field: 'firstName', headerName: 'Ordered By', width: 150 },
     { field: 'city', headerName: 'Address', width: 150 },
@@ -52,7 +52,7 @@ export const rows = [
           minute: '2-digit',
           second: '2-digit',
         };
-        return createdAtDate.toLocaleString(undefined, options);
+        return createdAtDate.toLocaleDateString('en-US', options);
       },
     },
     { field: 'totalPrice', headerName: 'Total Price', width: 120 },

@@ -15,18 +15,19 @@ const DataTable = () => {
 
   
   const formattedOrders = Array.isArray(orders)
-    ? orders.map((order) => ({
-        id: order._id,
-        orderedItems:order.orderedItems.product,
-        orderedItems: order.orderedItems.map((item) => item.product.title),
-        quantity: order.orderedItems.map((item) => item.quantity),
-        firstName: order.shippingInfo.firstName,
-        city: order.shippingInfo.city,
-        orderStatus: order.OrderStatus,
-        createdAt: order.createdAt,
-        totalPrice: order.totalPrice,
-      }))
-    : [];
+  ? orders.map((order) => ({
+      id: order._id,
+      orderedItems: order.orderedItems.map((item) => item.productName),
+      quantity: order.orderedItems.map((item) => item.quantity),
+      firstName: order.shippingInfo.firstName,
+      city: order.shippingInfo.city,
+      orderStatus: order.OrderStatus,
+      createdAt: order.createdAt,
+      totalPrice: order.totalPrice,
+    }))
+  : [];
+
+
 // console.log(orderedItems)
     const handleUpdateStatus = async (orderId, status) => {
       try {
@@ -41,7 +42,7 @@ const DataTable = () => {
       {
         field: 'action',
         headerName: 'Action',
-        width: 200,
+        width: 238,
         renderCell: (params) => {
           const orderStatus = params.row.orderStatus;
   
@@ -70,7 +71,7 @@ const DataTable = () => {
                 <div className="btn btn-danger" onClick={() => handleUpdateStatus(params.row.id, 'Dispatched')}>
                   Not Delivered
                 </div>
-                <div className="Btn" onClick={() => handleUpdateStatus(params.row.id, 'Pending')}>
+                <div className="btn btn-warning" onClick={() => handleUpdateStatus(params.row.id, 'Pending')}>
                   Pending
                 </div>
               </div>

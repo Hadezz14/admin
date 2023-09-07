@@ -42,8 +42,16 @@ const updateProduct = async (product) => {
 
 
 const deleteProduct = async (product) => {
-  const response = await axios.delete(`${base_url}product/${product._id}`, config);
-  return response.data;
+  console.log(product)
+
+  try {
+    const response = await axios.delete(`${base_url}product/${product._id}`,
+    config
+    );
+    return response.data;
+  } catch (error) {
+    throw error
+  }
 };
 
 const updateProductDiscount = async (productIds, discount) => {
