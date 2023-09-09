@@ -12,7 +12,7 @@ import { getCategories } from "../features/pcategory/pcategorySlice";
 import { getColors,createColor  } from "../features/color/colorSlice";
 import { Select } from "antd";
 import Dropzone from "react-dropzone";
-import { delImg, uploadImg } from "../features/upload/uploadSlice";
+import { clearImages, delImg, uploadImg } from "../features/upload/uploadSlice";
 import { createProducts, resetState } from "../features/product/productSlice";
 import { SketchPicker } from 'react-color';
 import { ColorBadge } from "../Datasource";
@@ -74,10 +74,9 @@ const Newproduct = () => {
   const createProductHandler = async (values) => {
     try {
       const createdProduct = await dispatch(createProducts(values));
-      console.log("Created product:", createdProduct);
       if (createdProduct) {
-        // formik.resetForm();
-        toast.success("Product Added Successfully!");
+        formik.resetForm();
+        dispatch(clearImages());
         setTimeout(() => {
           dispatch(resetState());
         }, 3000);

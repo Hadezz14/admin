@@ -1,9 +1,21 @@
 import React from "react";
 import CustomInput from "../components/CustomInput";
+import vyamLoginPage from "../imgs/vyam.png";
+
 
 const Resetpassword = () => {
   return (
-    <div className="py-5" style={{ background: "#ffd333", minHeight: "100vh" }}>
+    <div
+      className="login-container"
+      style={{
+        backgroundImage: `url(${vyamLoginPage})`,
+        backgroundSize: "contain", // Adjust this property
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center center",
+        minHeight: "100vh",
+        backgroundColor: "#1E1E1E"
+      }}
+    > 
       <br />
       <br />
       <br />

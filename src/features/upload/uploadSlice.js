@@ -42,7 +42,9 @@ const initialState = {
 export const uploadSlice = createSlice({
   name: "images",
   initialState,
-  reducers: {},
+  reducers: {clearImages: (state) => {
+    state.images = []; // Clear the images array
+  },},
   extraReducers: (builder) => {
     builder
       .addCase(uploadImg.pending, (state) => {
@@ -77,4 +79,7 @@ export const uploadSlice = createSlice({
       });
   },
 });
+
+export const { clearImages } = uploadSlice.actions;
+
 export default uploadSlice.reducer;

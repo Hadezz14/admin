@@ -10,6 +10,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import '../index.css'
 import { SketchPicker } from 'react-color';
+import { toast } from "react-toastify";
+
 
 const DataTable = () => {
 
@@ -58,13 +60,12 @@ const DataTable = () => {
     
     try {
       const productData = products.find((product) => product._id === params.id);
-      console.log(productData)
       dispatch(deleteProduct(productData))
         .then(() => {
           dispatch(getProducts());
         })
         .catch((error) => {
-          console.log("Error deleting Product", error);
+          toast.error("Error deleting Product", error);
         });
     } catch (error) {
       console.log("Error deleting Product", error);
@@ -72,7 +73,10 @@ const DataTable = () => {
   };
   
   const openDiscountForm = () => {
-    setIsDiscountFormOpen(true);
+    if (selectedProductIds.length === 0) {
+      toast.error("Select a Product!");
+    } else {
+    setIsDiscountFormOpen(true);}
   };
   
   const closeDiscountForm = () => {
@@ -82,11 +86,18 @@ const DataTable = () => {
   
   const handleDeleteDiscount = () => {
     if (selectedProductIds.length === 0) {
-      alert("No products selected. Please select products to remove discounts.");
+      toast.error("Select a Product!");
     } else {
-      dispatch(deleteDiscount(selectedProductIds));
-    }
-  };
+      dispatch(deleteDiscount(selectedProductIds))
+      .then(() => {
+        toast.success('Discount removed successfully!');
+        dispatch(getProducts());
+      })
+      .catch((error) => {
+        toast.error("Error deleting Discount", error);
+      });
+  }
+};
   
   
 
@@ -268,7 +279,8 @@ const DataTable = () => {
                  alert('Invalid discount value. Please enter a number between 1 and 100.');
                  return;
                }             
-               await dispatch(updateProductDiscount({ productIds: selectedProductIds, discount }));             
+               await dispatch(updateProductDiscount({ productIds: selectedProductIds, discount }));   
+               toast.success('Discount added successfully!');          
                closeDiscountForm();
              } catch (error) {
                console.error('Error adding discount:', error);
