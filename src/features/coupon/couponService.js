@@ -18,7 +18,6 @@ const updateCoupon = async (coupon) => {
       `${base_url}coupon/${coupon._id}`,
       {
         name: coupon.name,
-        expiry: coupon.expiry,
         discount: coupon.discount,
       },
       config

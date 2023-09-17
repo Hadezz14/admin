@@ -110,24 +110,7 @@ export const rows = [
  export const Couponcolumns = [
     { field: 'id', headerName: 'SN', width: 20 },
     { field: 'name', headerName: ' Name', width: 130 },
-    { field: 'discount', headerName: ' Discount', width: 130 },
-    {
-      field: 'expiry',
-      headerName: 'Expiry Date',
-      width: 190,
-      valueFormatter: (params) => {
-        const createdAtDate = new Date(params.value);
-        const options = {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        };
-        return createdAtDate.toLocaleString(undefined, options);
-      },
-    },,];
+    { field: 'discount', headerName: ' Discount', width: 130 },];
   
 export const Enquirycolumns = [
     { field: 'name', headerName: ' Name', width: 130 },

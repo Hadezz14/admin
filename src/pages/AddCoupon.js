@@ -14,7 +14,6 @@ import {
 
 let schema = yup.object().shape({
   name: yup.string().required("Coupon Name is Required"),
-  expiry: yup.date().required("Expiry Date is Required"),
   discount: yup.number().required("Discount Percentage is Required"),
 });
 const AddCoupon = () => {
@@ -31,7 +30,6 @@ const AddCoupon = () => {
     createdCoupon,
     couponName,
     couponDiscount,
-    couponExpiry,
     updatedCoupon,
   } = newCoupon;
   // const changeDateFormet = (date) => {
@@ -66,7 +64,7 @@ const AddCoupon = () => {
       toast.success("Coupon Updated Successfullly!");
       navigate("/admin/coupon-list");
     }
-    if (isError && couponName && couponDiscount && couponExpiry) {
+    if (isError && couponName && couponDiscount) {
       toast.error("Something Went Wrong!");
     }
   }, [isSuccess, isError, isLoading]);
@@ -74,11 +72,11 @@ const AddCoupon = () => {
     enableReinitialize: true,
     initialValues: {
       name: couponName || "",
-      expiry: couponExpiry || "",
       discount: couponDiscount || "",
     },
     validationSchema: schema,
     onSubmit: (values) => {
+      console.log("hello")
       if (getCouponId !== undefined) {
         const data = { id: getCouponId, couponData: values };
         dispatch(updateACoupon(data));
@@ -100,29 +98,18 @@ const AddCoupon = () => {
       </h3>
       <div>
         <form action="" onSubmit={formik.handleSubmit}>
-          <CustomInput
-            type="text"
-            name="name"
-            onChng={formik.handleChange("name")}
-            onBlr={formik.handleBlur("name")}
-            val={formik.values.name}
-            label="Enter Coupon Name"
-            id="name"
-          />
+        <CustomInput
+  type="text"
+  name="name"
+  onChng={formik.handleChange}
+  onBlr={formik.handleBlur}
+  val={formik.values.name}
+  label="Enter Coupon Name"
+  id="name"
+/>
+
           <div className="error">
             {formik.touched.name && formik.errors.name}
-          </div>
-          <CustomInput
-            type="datetime-local" // Change the input type to datetime-local
-            name="expiry"
-            onChng={formik.handleChange("expiry")}
-            onBlr={formik.handleBlur("expiry")}
-            // val={changeDateFormet(formik.values.expiry)} // Format the date
-            label="Enter Expiry Date and Time"
-            id="expiry"
-          />
-          <div className="error">
-            {formik.touched.expiry && formik.errors.expiry}
           </div>
           <CustomInput
             type="number"

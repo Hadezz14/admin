@@ -57,22 +57,17 @@ const DataTable = () => {
           } else if (orderStatus === 'Dispatched') {
             return (
               <div className="cellAction">
-                <div className="btn btn-success" onClick={() => handleUpdateStatus(params.row.id, 'Delivered')}>
+                <div className="btn btn-success"
+                 onClick={() => {
+                  const confirmChange = window.confirm('Change order status to Delivered?');
+                  if (confirmChange) {
+                    handleUpdateStatus(params.row.id, 'Delivered');
+                  }
+                }}>
                   Delivered
                 </div>
                 <div className="btn btn-warning" onClick={() => handleUpdateStatus(params.row.id, 'Pending')}>
                   Not Dispatched
-                </div>
-              </div>
-            );
-          } else if (orderStatus === 'Delivered') {
-            return (
-              <div className="cellAction">
-                <div className="btn btn-danger" onClick={() => handleUpdateStatus(params.row.id, 'Dispatched')}>
-                  Not Delivered
-                </div>
-                <div className="btn btn-warning" onClick={() => handleUpdateStatus(params.row.id, 'Pending')}>
-                  Pending
                 </div>
               </div>
             );

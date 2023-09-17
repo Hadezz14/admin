@@ -80,6 +80,17 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
+export const updatePassword = createAsyncThunk(
+  "user/updatePassword",
+  async (password, thunkAPI) => {
+    try {
+      // Call the backend updatePassword function from authService
+      return await authService.updatePassword(password);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 
 
 export const authSlice = createSlice({
@@ -184,6 +195,23 @@ export const authSlice = createSlice({
         state.message = action.error;
         state.isLoading = false;
       })
+      .addCase(updatePassword.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        // Optionally, you can update the user state with the updated user data if needed
+        // state.user = action.payload;
+        state.message = "Password updated successfully";
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error.message || "Password update failed";
+        state.isLoading = false;
+      });
   },
 });
 

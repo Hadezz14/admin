@@ -1,46 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import CustomInput from "../components/CustomInput";
-import vyamLoginPage from "../imgs/vyam.png";
+import { useDispatch, useSelector } from "react-redux";
+import { updatePassword } from "../features/auth/authSlice";
 
 
 const Resetpassword = () => {
-  return (
-    <div
-      className="login-container"
-      style={{
-        backgroundImage: `url(${vyamLoginPage})`,
-        backgroundSize: "contain", // Adjust this property
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center center",
-        minHeight: "100vh",
-        backgroundColor: "#1E1E1E"
-      }}
-    > 
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <div className="my-5 w-25 bg-white rounded-3 mx-auto p-4">
-        <h3 className="text-center title"> Reset Password</h3>
-        <p className="text-center">Please Enter your new password.</p>
-        <form action="">
-          <CustomInput type="password" label="New Password" id="pass" />
-          <CustomInput
-            type="password"
-            label="Confirm Password"
-            id="confirmpass"
-          />
+  const dispatch = useDispatch();
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-          <button
-            className="border-0 px-3 py-2 text-white fw-bold w-100"
-            style={{ background: "#ffd333" }}
-            type="submit"
-          >
-            Reset Password
-          </button>
-        </form>
-      </div>
+
+  const handleUpdatePassword = () => {
+    console.log(newPassword)
+    console.log(confirmPassword)
+    // Check if the new password and confirm password match
+    if (newPassword === confirmPassword) {
+      // Dispatch the updatePassword action with the new password
+      dispatch(updatePassword(newPassword))
+        .then(() => {
+          // Password updated successfully, you can handle success here
+          alert("Password updated successfully");
+          // You can also redirect the user to another page if needed
+          // history.push("/dashboard");
+        })
+        .catch((error) => {
+          // Handle the error (e.g., display an error message to the user)
+          alert(`Password update failed: ${error.message}`);
+        });
+    } else {
+      // Passwords do not match, handle accordingly (e.g., display an error message)
+      alert("Passwords do not match");
+    }
+  };
+  console.log(newPassword)
+  
+
+  return (
+    <div className="login-container">
+      <h3 className="text-center title">Reset Password</h3>
+      <p className="text-center">Please Enter your new password.</p>
+      <CustomInput
+        type="password"
+        label="New Password"
+        id="newPassword"
+        value={newPassword}
+        onChng={(e) => setNewPassword(e.target.value)}
+      />
+      <CustomInput
+        type="password"
+        label="Confirm Password"
+        id="confirmPassword"
+        value={confirmPassword}
+        onChng={(e) => setConfirmPassword(e.target.value)}
+      />
+      <button
+        className="btn btn-primary"
+        style={{ marginTop: "1rem" }}
+        type="submit"
+        onClick={handleUpdatePassword}
+      >
+        Update Password
+      </button>
     </div>
   );
 };

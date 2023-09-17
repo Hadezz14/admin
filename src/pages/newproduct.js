@@ -37,7 +37,7 @@ const Newproduct = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [currentColor, setCurrentColor] = useState("#ffffff");
+  const [currentColor, setCurrentColor] = useState([]);
 
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   
@@ -46,11 +46,9 @@ const Newproduct = () => {
     dispatch(getCategories());
     dispatch(getColors());
   }, []);
-
   const catState = useSelector((state) => state.pCategory.pCategories);
  
   const imgState = useSelector((state) => state.upload.images);
-  console.log(imgState);
   const newProduct = useSelector((state) => state.product);
   const { isSuccess, isError, isLoading, createdProduct } = newProduct;
   useEffect(() => {
@@ -72,22 +70,27 @@ const Newproduct = () => {
   });
 
   const createProductHandler = async (values) => {
-    try {
-      const createdProduct = await dispatch(createProducts(values));
-      if (createdProduct) {
-        formik.resetForm();
-        dispatch(clearImages());
-        setTimeout(() => {
-          dispatch(resetState());
-        }, 3000);
-      } else {
-        toast.error("Something Went Wrong!");
+    if ( values.color.length === 0) {
+      toast.error('select a color please')
+    } else {
+      try {
+        const createdProduct = await dispatch(createProducts(values));
+        if (createdProduct) {
+          formik.resetForm();
+          dispatch(clearImages());
+          setTimeout(() => {
+            dispatch(resetState());
+          }, 3000);
+        } else {
+          toast.error("Something Went Wrong!");
+        }
+      } catch (error) {
+        console.error("Error creating product:", error);
+        toast.error("Error in uploading image!");
       }
-    } catch (error) {
-      console.error("Error creating product:", error);
-      toast.error("Something Went Wrong!");
     }
   };
+  
   
   
 
@@ -112,16 +115,8 @@ const Newproduct = () => {
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      console.log("Submitting form", values);
-      if (values.color.length === 0) { // Check if at least one color is selected
-        formik.setFieldError("color", "Pick at least one color");
-      } else {
-        console.log("Dispatching createProducts action", values);
         createProductHandler(values);
-      }
-    }
-    
-    
+    },
   });
   // const handleColors = (selectedOptions) => {
   //   const setlectedColorIds = selectedOptions.map((option) => option.value)
@@ -132,7 +127,7 @@ const Newproduct = () => {
       <h3 className="mb-4 title">Add Product</h3>
       <div>
       <form
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={(e) => {e.preventDefault()}}
           encType="multipart/form-data"
           className="d-flex gap-3 flex-column"
         >
@@ -216,7 +211,6 @@ const Newproduct = () => {
                     ...formik.values.color,
                     currentColor
                   ]);
-                  setCurrentColor("#ffffff"); // Reset the color picker
                 }}
               >
                 Add Color
@@ -280,7 +274,6 @@ const Newproduct = () => {
         </div>
           <div className="showimages d-flex flex-wrap gap-3">
             {imgState?.map((i, j) => {
-              console.log(i.public_id)
               return (
                 <div className=" position-relative" key={j}>
                   <button
@@ -296,8 +289,12 @@ const Newproduct = () => {
           </div>
           <button
         className="btn btn-success border-0 rounded-3 my-5"
-        type="submit"
-        onClick={() =>{createProductHandler(formik.values)
+        onClick={() => {
+          if (currentColor !== "") {
+            createProductHandler(formik.values);
+          } else {
+            toast.error("Please Select color to add product")
+          }
         }}
       >
         Add Product

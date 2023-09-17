@@ -46,7 +46,18 @@ const deleteUser = async (userId) => {
   return response.data;
 };
 
-
+const updatePassword = async (password) => {
+  try {
+    const response = await axios.put(
+      `${base_url}user/password`,
+      { password }, // Pass the new password in the request body
+      config
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 const authService = {
   login,
   getOrders,
@@ -54,6 +65,7 @@ const authService = {
   blockUser,
   unblockUser,
   deleteUser,
+  updatePassword
 };
 
 export default authService;

@@ -120,16 +120,6 @@ const DataTable = () => {
               }))
             }
             />
-            <label>Expiry Date:</label>
-            <input
-              type="date"
-              value={selectedCoupon.expiry}
-              onChange={(e) => setSelectedCoupon((prevProduct) => ({
-                ...prevProduct,
-                expiry: e.target.value,
-              }))
-            }
-            />
             </form>
           </DialogContent>
           <DialogActions>

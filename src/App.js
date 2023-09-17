@@ -48,6 +48,8 @@ function App() {
           <Route path="list-product" element={<Productlist />} />
           {/* <Route path="product" element={<Addproduct />} /> */}
           <Route path="product" element={<Newproduct/>} />
+          <Route path="changePassword" element={<Resetpassword/>} />
+
 
         </Route>
       </Routes>
