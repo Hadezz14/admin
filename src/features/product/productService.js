@@ -27,7 +27,7 @@ const updateProduct = async (product) => {
       {
         title: product.title,
         color: product.color,
-        quantity: product.quantity,
+        size: product.size,
         price: product.price,
       },
       config

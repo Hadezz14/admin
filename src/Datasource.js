@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import Color from "./components/Color";
 
 export const Usercolumns = [
@@ -89,7 +90,24 @@ export const rows = [
         );
       },
     },
-    { field: 'quantity', headerName: 'Quantity', width: 100 },
+    {
+      field: 'size',
+      headerName: 'Quantity',
+      width: 180,
+      renderCell: (params) => {
+        const sizes = params.value;
+        const formattedSizes = sizes.map((size, index) => (
+          <div key={index} style={{ marginBottom: '5px' }}>{`Size: ${size.size}, Quantity: ${size.quantity}`}</div>
+        ));
+        return (
+          <div>
+          <Tooltip title={formattedSizes}>
+            {formattedSizes}
+            </Tooltip>
+          </div>
+        );
+      },
+    },
     { field: 'price', headerName: 'Price', width: 100 },
     {
       field: 'discount',

@@ -38,6 +38,7 @@ const DataTable = () => {
     const productData = products.find((product) => product._id === params.id);
     setEditedProduct({ ...productData });
     setIsEditFormOpen(true);
+    console.log(productData);
   };
 
   const handleFormClose = () => {
@@ -99,7 +100,20 @@ const DataTable = () => {
   }
 };
   
-  
+const handleRemoveSize = (index) => {
+  setEditedProduct((prevProduct) => ({
+    ...prevProduct,
+    size: prevProduct.size.filter((_, i) => i !== index),
+  }));
+};
+
+// Function to add a new empty size
+const handleAddSize = () => {
+  setEditedProduct((prevProduct) => ({
+    ...prevProduct,
+    size: [...prevProduct.size, { size: '', quantity: '' }],
+  }));
+};
 
   // console.log(selectedProductIds);
 
@@ -135,7 +149,7 @@ const DataTable = () => {
 
   return (
     <>
-      <div style={{ height: 400, width: '100%' }}>
+      <div style={{ height: 550, width: '100%' }}>
         <DataGrid
           rows={products}
           columns={(Productcolumns || []).concat(actionColumn)}
@@ -144,11 +158,13 @@ const DataTable = () => {
           pageSize={10}
           pageSizeOptions={[5, 10]}
           checkboxSelection
+          rowHeight={125}
           getRowId={(row ) => row._id}
           onRowSelectionModelChange={(ids) => {
             console.log(ids)
             setSelectedProductIds(ids);
           }}
+          className="data-grid"
         />
        <div className="disBtns">
         <button className="btn btn-primary" onClick={() => {
@@ -221,17 +237,59 @@ const DataTable = () => {
         </div>
       </div>
               <div>
-                <label>Quantity:</label>
-                <input
-                  type="number"
-                  value={productData.quantity}
-                  onChange={(e) =>
-                    setEditedProduct((prevProduct) => ({
-                      ...prevProduct,
-                      quantity: e.target.value,
-                    }))
-                  }
-                />
+              <label>Size:</label>
+                {productData.size.map((size, index) => (
+                  <div key={index} className="size-input form-row align-items-center mb-3 ">
+                    <div className='display-flex '>
+                    <input
+                      className='sizeInput'
+                      type="text"
+                      value={size.size}
+                      onChange={(e) =>
+                        setEditedProduct((prevProduct) => ({
+                          ...prevProduct,
+                          size: prevProduct.size.map((item, i) =>
+                            i === index
+                              ? { ...item, size: e.target.value }
+                              : item
+                          ),
+                        }))
+                      }
+                    />
+                    <input
+                      className='quantityInput'
+                      type="number"
+                      value={size.quantity}
+                      onChange={(e) =>
+                        setEditedProduct((prevProduct) => ({
+                          ...prevProduct,
+                          size: prevProduct.size.map((item, i) =>
+                            i === index
+                              ? { ...item, quantity: e.target.value }
+                              : item
+                          ),
+                        }))
+                      }
+                      style={{ marginLeft: '1rem' }}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleRemoveSize(index)}
+                      style={{ marginLeft: '1rem' }}
+                    >
+                      Remove
+                    </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleAddSize}
+                >
+                  Add Size
+                </button>
               </div>
               <div>
                 <label>Price:</label>

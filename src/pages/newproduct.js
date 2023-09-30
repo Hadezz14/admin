@@ -51,6 +51,8 @@ const Newproduct = () => {
   const imgState = useSelector((state) => state.upload.images);
   const newProduct = useSelector((state) => state.product);
   const { isSuccess, isError, isLoading, createdProduct } = newProduct;
+  const [sizeInput, setSizeInput] = useState({ size: '', quantity: '' });
+
   useEffect(() => {
     if (isSuccess && createdProduct) {
       toast.success("Product Added Successfullly!");
@@ -91,6 +93,25 @@ const Newproduct = () => {
     }
   };
   
+  const handleAddSize = () => {
+    if (sizeInput.size && sizeInput.quantity) {
+      // Check if the size is already added in sizeInput
+      const isSizeAdded = formik.values.size.some(
+        (size) => size.size === sizeInput.size
+      );
+
+      if (isSizeAdded) {
+        toast.error('Size is already added.');
+      } else {
+        const newSize = { size: sizeInput.size, quantity: parseInt(sizeInput.quantity) };
+        formik.setFieldValue('size', [...formik.values.size, newSize]);
+        setSizeInput({ size: '', quantity: '' });
+      }
+    } else {
+      toast.error('Please enter both size and quantity.');
+    }
+  };
+
   
   
 
@@ -110,7 +131,7 @@ const Newproduct = () => {
       category: "",
       tags: "",
       color: [],
-      quantity: "",
+      size: [],
       images: "",
     },
     validationSchema: schema,
@@ -235,14 +256,53 @@ const Newproduct = () => {
                     ))}
                   </div>
             </div>
-          <CustomInput
-            type="number"
-            label="Enter Product Quantity"
-            name="quantity"
-            onChng={formik.handleChange("quantity")}
-            onBlr={formik.handleBlur("quantity")}
-            val={formik.values.quantity}
-          />
+            <input
+        type="text"
+        placeholder="Size"
+        value={sizeInput.size}
+        onChange={(e) =>
+          setSizeInput({ ...sizeInput, size: e.target.value })
+        }
+      />
+      <input
+        type="number"
+        placeholder="Quantity"
+        value={sizeInput.quantity}
+        onChange={(e) =>
+          setSizeInput({ ...sizeInput, quantity: e.target.value })
+        }
+      />
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={handleAddSize}
+      >
+        Add Size
+      </button>
+          
+      <div className="selected-sizes">
+      <h6>Added Sizes</h6>
+
+  {formik.values.size.map((size, index) => (
+    <div key={index} className="selected-size" style={{marginBottom: '0.6rem'}}>
+      Size: {size.size}, Quantity: {size.quantity}
+      <button
+        className="btn btn-danger btn-sm"
+        onClick={() => {
+          const updatedSizes = formik.values.size.filter(
+            (s, i) => i !== index
+          );
+          formik.setFieldValue('size', updatedSizes);
+        }}
+        style={{marginLeft: '0.4rem'}}
+      >
+        Remove
+      </button>
+    </div>
+  ))}
+</div>
+
+
           <div className="error">
             {formik.touched.quantity && formik.errors.quantity}
           </div>

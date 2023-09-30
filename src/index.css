@@ -122,8 +122,14 @@ main::-webkit-scrollbar {
 .form-container button {
   margin-right: 10px;
 }
+.sizeInput {
+  width: 30% !important;
 
 
+}
+.quantityInput{
+  width: 30% !important;
+}
 .Btn {
   padding: 5px 10px;
   background-color: #007bff;
@@ -148,7 +154,39 @@ main::-webkit-scrollbar {
   margin-bottom: 0.7rem;
 }
 
+/* CSS for custom-styled scrollbar */
+.custom-scrollbar {
+  max-height: 100px; /* Set the maximum height as needed */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: grey #f1f3f4; /* Firefox */
+}
 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f3f4; /* Track color */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: grey; /* Thumb color */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: grey; /* Hover color */
+}
+
+/* Add scrollable styles to the size and quantity columns */
+.data-grid .MuiDataGrid-cell[data-field="size"] {
+  max-height: 100px; /* Adjust the maximum height as needed */
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-line;
+}
 
 .dashboard-stat-container {
   flex: 1;
