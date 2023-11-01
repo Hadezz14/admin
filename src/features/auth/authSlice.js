@@ -112,7 +112,7 @@ export const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.isError = true;
         state.isSuccess = false;
-        state.message = action.error;
+        state.message = action.payload.message;
         state.isLoading = false;
       })
       .addCase(getOrders.pending, (state) => {

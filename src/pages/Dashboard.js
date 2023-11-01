@@ -31,10 +31,8 @@ function BasicTable() {
     dispatch(getOrders());
   },[])
 
-  console.log(orders)
 
   const recentOrders = orders.slice(0, 10);
-  console.log(recentOrders)
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
@@ -149,7 +147,6 @@ const previousMonthSales = previousMonthDeliveredOrders.reduce((total, order) =>
   return total + order.totalPrice;
 }, 0);
 
-console.log('Total Sales for Previous Month (Delivered Orders):', previousMonthSales);
       
   const salesConfig = {
     data: salesData, 
@@ -269,7 +266,7 @@ if (previousMonthProfit !== 0) {
         <div className="d-flex justify-content-between align-items-center">
            <div>
              <p className="desc">Total Sales</p>
-             <h4 className="mb-0 sub-title">NPR: {totalSales}</h4>
+             <h4 className="mb-0 sub-title">£: {totalSales}</h4>
            </div>
            <div className="d-flex flex-column align-items-end">
           {previousMonthSales !== 0 && (
@@ -295,7 +292,7 @@ if (previousMonthProfit !== 0) {
         <div className="d-flex justify-content-between align-items-center">
         <div>
           <p className="desc">Total Revenue</p>
-          <h4 className="mb-0 sub-title">NPR: {totalProfit}</h4>
+          <h4 className="mb-0 sub-title">£: {totalProfit}</h4>
         </div>
           <div className="d-flex flex-column align-items-end">
           {previousMonthProfit !== 0 && (

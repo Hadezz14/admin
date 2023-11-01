@@ -28,10 +28,11 @@ const Login = () => {
       dispatch(login(values));
     },
   });
+
   const authState = useSelector((state) => state);
+  
 
   const { user, isError, isSuccess, isLoading, message } = authState.auth;
-
   useEffect(() => {
     if (isSuccess) {
       navigate("admin");
@@ -59,7 +60,9 @@ const Login = () => {
         <h3 className="text-center title">Login</h3>
         <p className="text-center">Login to your account to continue.</p>
         <div className="error text-center">
-          {message.message == "Rejected" ? "You are not an Admin" : ""}
+          {message == "Request failed with status code 401" ? "Invalid Credentails":""}
+          {message == "Request failed with status code 403" ? "Not Authorized":""}
+          {message == "Request failed with status code 500" ? "User Not Found":""}
         </div>
         <form action="" onSubmit={formik.handleSubmit}>
           <CustomInput
