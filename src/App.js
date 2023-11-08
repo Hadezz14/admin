@@ -21,11 +21,13 @@ import AddCoupon from "./pages/AddCoupon";
 import ViewEnq from "./pages/ViewEnq";
 import ViewOrder from "./pages/ViewOrder";
 import Newproduct from "./pages/newproduct";
+import Verification from "./pages/Verification";
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/otp_verify" element={<Verification />} />
         <Route path="/reset-password" element={<Resetpassword />} />
         <Route path="/forgot-password" element={<Forgotpassword />} />
         <Route path="/admin" element={<MainLayout />}>
@@ -35,7 +37,7 @@ function App() {
           <Route path="coupon-list" element={<Couponlist />} />
           <Route path="coupon" element={<AddCoupon />} />
           <Route path="coupon/:id" element={<AddCoupon />} />
-          
+
           <Route path="orders" element={<Orders />} />
           <Route path="order/:id" element={<ViewOrder />} />
           <Route path="customers" element={<Customers />} />
@@ -47,10 +49,8 @@ function App() {
           <Route path="category/:id" element={<Addcat />} />
           <Route path="list-product" element={<Productlist />} />
           {/* <Route path="product" element={<Addproduct />} /> */}
-          <Route path="product" element={<Newproduct/>} />
-          <Route path="changePassword" element={<Resetpassword/>} />
-
-
+          <Route path="product" element={<Newproduct />} />
+          <Route path="changePassword" element={<Resetpassword />} />
         </Route>
       </Routes>
     </Router>

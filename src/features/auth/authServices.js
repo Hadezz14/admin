@@ -3,11 +3,20 @@ import { config } from "../../utils/axiosconfig";
 import { base_url } from "../../utils/baseUrl";
 const login = async (user) => {
   const response = await axios.post(`${base_url}user/admin-login`, user);
+  // if (response.data) {
+  //   localStorage.setItem("user", JSON.stringify(response.data));
+  // }
+  return response.data;
+};
+
+const verifyotp = async (userData) => {
+  const response = await axios.post(`${base_url}user/verify-otp`, userData);
   if (response.data) {
     localStorage.setItem("user", JSON.stringify(response.data));
   }
   return response.data;
 };
+
 const getOrders = async () => {
   const response = await axios.get(`${base_url}user/getallorders`, config);
 
@@ -37,7 +46,11 @@ const blockUser = async (userId) => {
 };
 
 const unblockUser = async (userId) => {
-  const response = await axios.put(`${base_url}user/unblock-user/${userId}`,{},config);
+  const response = await axios.put(
+    `${base_url}user/unblock-user/${userId}`,
+    {},
+    config
+  );
   return response.data;
 };
 
@@ -65,7 +78,8 @@ const authService = {
   blockUser,
   unblockUser,
   deleteUser,
-  updatePassword
+  updatePassword,
+  verifyotp,
 };
 
 export default authService;

@@ -11,6 +11,7 @@ const initialState = {
   isError: false,
   isLoading: false,
   isSuccess: false,
+  isverified: false,
   message: "",
 };
 export const login = createAsyncThunk(
@@ -18,6 +19,18 @@ export const login = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       return await authService.login(userData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+export const verify = createAsyncThunk(
+  "auth/verify",
+  async (userData, thunkAPI) => {
+    try {
+      console.log(userData);
+
+      return await authService.verifyotp(userData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -50,7 +63,6 @@ export const blockUser = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       return await authService.blockUser(userId);
-      
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -62,7 +74,6 @@ export const unblockUser = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       return await authService.unblockUser(userId);
-      
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -92,7 +103,6 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
-
 export const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
@@ -114,6 +124,23 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.payload.message;
         state.isLoading = false;
+      })
+      .addCase(verify.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(verify.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isverified = true;
+        state.user = action.payload;
+      })
+      .addCase(verify.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isverified = false;
+        state.message = action.payload.message;
       })
       .addCase(getOrders.pending, (state) => {
         state.isLoading = true;
