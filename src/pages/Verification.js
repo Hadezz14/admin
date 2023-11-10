@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { verify } from "../features/auth/authSlice";
+import { otpresend, verify } from "../features/auth/authSlice";
 import vyamLoginPage from "../imgs/vyam.png";
 
 let schema = yup.object().shape({
@@ -26,6 +26,10 @@ const Verification = () => {
       dispatch(verify(values));
     },
   });
+
+  function resendOTP() {
+    dispatch(otpresend({ email: user.email }));
+  }
 
   useEffect(() => {
     if (isverified) {
@@ -78,6 +82,9 @@ const Verification = () => {
           />
           <div className="error mt-2">
             {formik.touched.otp && formik.errors.otp}
+          </div>
+          <div className="mb-3 text-end">
+            <Link onClick={resendOTP}>Resend OTP</Link>
           </div>
           <button
             className="border-0 px-3 py-2 text-white fw-bold w-100 text-center text-decoration-none fs-5"

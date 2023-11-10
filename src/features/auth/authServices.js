@@ -17,6 +17,11 @@ const verifyotp = async (userData) => {
   return response.data;
 };
 
+const resendotp = async (userData) => {
+  const response = await axios.post(`${base_url}user/resend-otp`, userData);
+  return response.data;
+};
+
 const getOrders = async () => {
   const response = await axios.get(`${base_url}user/getallorders`, config);
 
@@ -80,6 +85,7 @@ const authService = {
   deleteUser,
   updatePassword,
   verifyotp,
+  resendotp,
 };
 
 export default authService;

@@ -28,9 +28,18 @@ export const verify = createAsyncThunk(
   "auth/verify",
   async (userData, thunkAPI) => {
     try {
-      console.log(userData);
-
       return await authService.verifyotp(userData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const otpresend = createAsyncThunk(
+  "auth/resendotp",
+  async (userData, thunkAPI) => {
+    try {
+      return await authService.resendotp(userData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
