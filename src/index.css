@@ -209,6 +209,26 @@ main::-webkit-scrollbar {
   gap:1rem;
   margin-top:1rem;
 }
+.loading-text {
+  display: inline-block;
+  position: relative;
+}
+
+.loading-text:after {
+  content: "...";
+  display: inline-block;
+  animation: ellipsis 1.3s infinite;
+}
+
+@keyframes ellipsis {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  33% {
+    opacity: 1.2;
+  }
+}
+
 
 
 /* meida queries */

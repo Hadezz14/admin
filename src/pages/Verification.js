@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import CustomInput from "../components/CustomInput";
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
@@ -14,7 +14,7 @@ const Verification = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authState = useSelector((state) => state);
-  const { user, isError, isSuccess, isLoading, isverified, message } =
+  const { user, isError, isSuccess, isLoading, isverified, isLoadingResend, message } =
     authState.auth;
   const formik = useFormik({
     initialValues: {
@@ -60,13 +60,13 @@ const Verification = () => {
         <h3 className="text-center title">OTP Verification </h3>
         <p className="text-center">Verify OTP sent your email to Login </p>
         <div className="error text-center">
-          {message == "Request failed with status code 401"
+          {message === "Request failed with status code 401"
             ? "Invalid Credentails"
             : ""}
-          {message == "Request failed with status code 403"
+          {message === "Request failed with status code 403"
             ? "Not Authorized"
             : ""}
-          {message == "Request failed with status code 500"
+          {message === "Request failed with status code 500"
             ? "User Not Found"
             : ""}
         </div>
@@ -84,14 +84,25 @@ const Verification = () => {
             {formik.touched.otp && formik.errors.otp}
           </div>
           <div className="mb-3 text-end">
-            <Link onClick={resendOTP}>Resend OTP</Link>
+            <Link onClick={resendOTP} disabled={isLoading || isLoadingResend}>
+              {isLoadingResend ? (
+                <div className="loading-text">Resending OTP</div>
+              ) : (
+                "Resend OTP"
+              )}
+            </Link>
           </div>
           <button
             className="border-0 px-3 py-2 text-white fw-bold w-100 text-center text-decoration-none fs-5"
             style={{ background: "#ffd333" }}
             type="submit"
+            disabled={isLoading || isLoadingResend}
           >
-            Verify OTP
+            {isLoading ? (
+              <div className="loading-text">Verifying OTP</div>
+            ):(
+              "Verify OTP"
+            )}
           </button>
         </form>
       </div>

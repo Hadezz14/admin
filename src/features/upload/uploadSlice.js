@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import uploadService from "./uploadService";
-import { async } from "q";
 
 export const uploadImg = createAsyncThunk(
   "upload/images",

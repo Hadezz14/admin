@@ -22,22 +22,25 @@ export const createColor = async (color) => {
 }
 
 const updateColor = async (color) => {
+  const request = config();
   const response = await axios.put(
     `${base_url}color/${color.id}`,
     { title: color.colorData.title },
-    config
+    request
   );
 
   return response.data;
 };
 const getColor = async (id) => {
-  const response = await axios.get(`${base_url}color/${id}`, config);
+  const request = config();
+  const response = await axios.get(`${base_url}color/${id}`, request);
 
   return response.data;
 };
 
 const deleteColor = async (id) => {
-  const response = await axios.delete(`${base_url}color/${id}`, config);
+  const request = config();
+  const response = await axios.delete(`${base_url}color/${id}`, request);
 
   return response.data;
 };

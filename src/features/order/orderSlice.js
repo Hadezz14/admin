@@ -23,7 +23,6 @@ export const createOrder = createAsyncThunk(
 export const updateOrderStatus = createAsyncThunk(
   "order/update-order-status",
   async ({ orderId, status }, thunkAPI) => {
-    console.log(status)
     try {
       return await orderService.updateOrderStatus(orderId, status);
     } catch (error) {

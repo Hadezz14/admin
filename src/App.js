@@ -15,19 +15,22 @@ import Productlist from "./pages/Productlist";
 
 import Addcolor from "./pages/Addcolor";
 import Addcat from "./pages/Addcat";
-import Addproduct from "./pages/Addproduct";
 import Couponlist from "./pages/Couponlist";
 import AddCoupon from "./pages/AddCoupon";
 import ViewEnq from "./pages/ViewEnq";
 import ViewOrder from "./pages/ViewOrder";
 import Newproduct from "./pages/newproduct";
 import Verification from "./pages/Verification";
+import ForgetPasswordVerify from "./pages/forgetPasswordVerify";
+import Changepassword from "./pages/changePassword";
+
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/otp_verify" element={<Verification />} />
+        <Route path="/otp_verify-forgetPaaword" element={<ForgetPasswordVerify />} />
         <Route path="/reset-password" element={<Resetpassword />} />
         <Route path="/forgot-password" element={<Forgotpassword />} />
         <Route path="/admin" element={<MainLayout />}>
@@ -48,9 +51,8 @@ function App() {
           <Route path="category" element={<Addcat />} />
           <Route path="category/:id" element={<Addcat />} />
           <Route path="list-product" element={<Productlist />} />
-          {/* <Route path="product" element={<Addproduct />} /> */}
           <Route path="product" element={<Newproduct />} />
-          <Route path="changePassword" element={<Resetpassword />} />
+          <Route path="changePassword" element={<Changepassword />} />
         </Route>
       </Routes>
     </Router>

@@ -2,17 +2,20 @@ import axios from "axios";
 import { config } from "../../utils/axiosconfig";
 import { base_url } from "../../utils/baseUrl";
 const getCoupons = async () => {
-  const response = await axios.get(`${base_url}coupon/`, config);
+  const request = config();
+  const response = await axios.get(`${base_url}coupon/`, request);
 
   return response.data;
 };
 
 const createCoupons = async (coupon) => {
-  const response = await axios.post(`${base_url}coupon/`, coupon, config);
+  const request = config();
+  const response = await axios.post(`${base_url}coupon/`, coupon, request);
 
   return response.data;
 };
 const updateCoupon = async (coupon) => {
+  const request = config();
   try {
     const response = await axios.put(
       `${base_url}coupon/${coupon._id}`,
@@ -20,7 +23,7 @@ const updateCoupon = async (coupon) => {
         name: coupon.name,
         discount: coupon.discount,
       },
-      config
+      request
     );
     return response.data;
   } catch (error) {
@@ -30,13 +33,15 @@ const updateCoupon = async (coupon) => {
 };
 
 const getCoupon = async (id) => {
-  const response = await axios.get(`${base_url}coupon/${id}`, config);
+  const request = config();
+  const response = await axios.get(`${base_url}coupon/${id}`, request);
 
   return response.data;
 };
 
 const deleteCoupon = async (id) => {
-  const response = await axios.delete(`${base_url}coupon/${id}`, config);
+  const request = config();
+  const response = await axios.delete(`${base_url}coupon/${id}`, request);
 
   return response.data;
 };

@@ -3,23 +3,35 @@ import { config } from "../../utils/axiosconfig";
 import { base_url } from "../../utils/baseUrl";
 const login = async (user) => {
   const response = await axios.post(`${base_url}user/admin-login`, user);
-  // if (response.data) {
-  //   localStorage.setItem("user", JSON.stringify(response.data));
-  // }
   return response.data;
 };
 
 const verifyotp = async (userData) => {
   const response = await axios.post(`${base_url}user/verify-otp`, userData);
+  
   if (response.data) {
-    localStorage.setItem("user", JSON.stringify(response.data));
+    await new Promise(resolve => {
+      localStorage.setItem("user", JSON.stringify(response.data));
+      resolve();
+    });
+
+    return response.data;
   }
-  return response.data;
 };
 
 const resendotp = async (userData) => {
   const response = await axios.post(`${base_url}user/resend-otp`, userData);
   return response.data;
+};
+
+const forgotPasswordAdmin = async (email) => {
+  try {
+    const response = await axios.post(`${base_url}user/admin-forget-password`, { email });
+    return response.data;
+  } catch (error) {
+    // Handle error or return a custom error response
+    throw error;
+  }
 };
 
 const getOrders = async () => {
@@ -38,11 +50,12 @@ const getOrder = async (id) => {
 };
 
 const blockUser = async (userId) => {
+  const request = config();
   try {
     const response = await axios.put(
       `${base_url}user/block-user/${userId}`,
       {},
-      config
+      request
     );
     return response.data;
   } catch (error) {
@@ -51,10 +64,11 @@ const blockUser = async (userId) => {
 };
 
 const unblockUser = async (userId) => {
+  const request = config();
   const response = await axios.put(
     `${base_url}user/unblock-user/${userId}`,
     {},
-    config
+    request
   );
   return response.data;
 };
@@ -65,17 +79,19 @@ const deleteUser = async (userId) => {
 };
 
 const updatePassword = async (password) => {
+  const request = config();
   try {
     const response = await axios.put(
       `${base_url}user/password`,
       { password }, // Pass the new password in the request body
-      config
+      request
     );
     return response.data;
   } catch (error) {
     throw new Error(error);
   }
 };
+
 const authService = {
   login,
   getOrders,
@@ -86,6 +102,7 @@ const authService = {
   updatePassword,
   verifyotp,
   resendotp,
+  forgotPasswordAdmin
 };
 
 export default authService;

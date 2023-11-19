@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authServices";
-import { config } from "../../utils/axiosconfig";
 
 const getUserfromLocalStorage = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user"))
@@ -12,6 +11,7 @@ const initialState = {
   isLoading: false,
   isSuccess: false,
   isverified: false,
+  isLoadingResend: false,
   message: "",
 };
 export const login = createAsyncThunk(
@@ -42,6 +42,17 @@ export const otpresend = createAsyncThunk(
       return await authService.resendotp(userData);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+export const forgotPasswordAdmin = createAsyncThunk(
+  "auth/forgotPasswordAdmin",
+  async ({ email }, thunkAPI) => {
+    try {
+      const response = await authService.forgotPasswordAdmin(email);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -151,6 +162,20 @@ export const authSlice = createSlice({
         state.isverified = false;
         state.message = action.payload.message;
       })
+      .addCase(otpresend.pending, (state) => {
+        state.isLoadingResend = true;
+      })
+      .addCase(otpresend.fulfilled, (state, action) => {
+        state.isError = false;
+        state.isLoadingResend = false;
+        state.isSuccess = true;
+      })
+      .addCase(otpresend.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoadingResend = false;
+        state.isSuccess = false;
+        state.message = action.payload.message;
+      })
       .addCase(getOrders.pending, (state) => {
         state.isLoading = true;
       })
@@ -247,6 +272,25 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error.message || "Password update failed";
         state.isLoading = false;
+      })
+      .addCase(forgotPasswordAdmin.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccess = false;
+        state.isError = false;
+        state.message = "";
+      })
+      .addCase(forgotPasswordAdmin.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.user = action.payload;
+        state.message = action.payload.message;
+      })
+      .addCase(forgotPasswordAdmin.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.payload.message;
       });
   },
 });

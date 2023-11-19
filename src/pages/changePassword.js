@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import CustomInput from "../components/CustomInput";
 import { useDispatch } from "react-redux";
 import { updatePassword } from "../features/auth/authSlice";
-import vyamLoginPage from "../imgs/vyam.png";
 
 
-const Resetpassword = () => {
+const Changepassword = () => {
   const dispatch = useDispatch();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -34,19 +33,7 @@ const Resetpassword = () => {
   
 
   return (
-    <div className="login-container"
-      style={{
-        backgroundImage: `url(${vyamLoginPage})`,
-        backgroundSize: "contain",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center center",
-        minHeight: "100vh",
-        backgroundColor: "#1E1E1E",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}>
-      <div className="loginForm rounded-3 mx-auto p-4">
+    <div className="login-container">
       <h3 className="text-center title">Reset Password</h3>
       <p className="text-center">Please Enter your new password.</p>
       <CustomInput
@@ -72,8 +59,7 @@ const Resetpassword = () => {
         Update Password
       </button>
     </div>
-    </div>
   );
 };
 
-export default Resetpassword;
+export default Changepassword;

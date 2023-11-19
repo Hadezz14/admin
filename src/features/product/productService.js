@@ -9,9 +9,9 @@ const getProducts = async () => {
 };
 
 const createProduct = async (product) => {
-  console.log(product)
+  const request = config();
   try{
-    const response = await axios.post(`${base_url}product/`, product, config);
+    const response = await axios.post(`${base_url}product/`, product, request);
     return response.data;
   }
   catch(error){
@@ -20,8 +20,8 @@ const createProduct = async (product) => {
 };
 
 const updateProduct = async (product) => {
+  const request = config();
   try {
-    console.log(product);
     const response = await axios.put(
       `${base_url}product/${product._id}`,
       {
@@ -30,9 +30,8 @@ const updateProduct = async (product) => {
         size: product.size,
         price: product.price,
       },
-      config
+      request
     );
-    console.log(response.data)
     return response.data;
     
   } catch (error) {
@@ -42,11 +41,11 @@ const updateProduct = async (product) => {
 
 
 const deleteProduct = async (product) => {
-  console.log(product)
+  const request = config();
 
   try {
     const response = await axios.delete(`${base_url}product/${product._id}`,
-    config
+    request
     );
     return response.data;
   } catch (error) {
@@ -55,12 +54,13 @@ const deleteProduct = async (product) => {
 };
 
 const updateProductDiscount = async (productIds, discount) => {
+  const request = config();
   try {
     const response = await axios.put(
       `${base_url}product/discount`,
       { productIds: productIds,
         discount: discount },
-      config
+      request
     );
     return response.data;
   } catch (error) {
@@ -69,10 +69,10 @@ const updateProductDiscount = async (productIds, discount) => {
 };
 
 const deleteDiscount = async (productIds) => {
+  const request = config();
   try {
     const response = await axios.delete(`${base_url}product/delete-discount`, {
-      data: { productIds: productIds },
-      ...config,
+      data: { productIds: productIds }, ...request
     });
     return response.data;
   } catch (error) {

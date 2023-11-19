@@ -4,40 +4,40 @@ import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../features/auth/authSlice";
+import { otpresend, verify } from "../features/auth/authSlice";
 import vyamLoginPage from "../imgs/vyam.png";
 
 let schema = yup.object().shape({
-  email: yup
-    .string()
-    .email("Email should be valid")
-    .required("Email is Required"),
-  password: yup.string().required("Password is Required"),
+  otp: yup.string().required("OPT is Required"),
 });
-const Login = () => {
+const ForgetPasswordVerify = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const authState = useSelector((state) => state);
+  const { user, isError, isSuccess, isLoading, isverified, isLoadingResend, message } =
+    authState.auth;
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
+      otp: "",
+      email: user.email,
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      dispatch(login(values));
+      dispatch(verify(values));
     },
   });
 
-  const authState = useSelector((state) => state);
+  function resendOTP() {
+    dispatch(otpresend({ email: user.email }));
+  }
 
-  const { user, isError, isSuccess, isLoading, message } = authState.auth;
   useEffect(() => {
-    if (isSuccess) {
-      navigate("/otp_verify");
+    if (isverified) {
+      navigate("/reset-password");
     } else {
       navigate("");
     }
-  }, [user, isError, isSuccess, isLoading]);
+  },[user, isError, isverified, isSuccess, isLoading]);
   return (
     <div
       className="login-container"
@@ -56,9 +56,9 @@ const Login = () => {
       <br />
       <br />
       <br />
-      <div className="loginForm rounded-3 mx-auto p-4" >
-        <h3 className="text-center title">Login</h3>
-        <p className="text-center">Login to your account to continue.</p>
+      <div className="loginForm rounded-3 mx-auto p-4">
+        <h3 className="text-center title">OTP Verification </h3>
+        <p className="text-center">Verify OTP sent your email to Login </p>
         <div className="error text-center">
           {message === "Request failed with status code 401"
             ? "Invalid Credentails"
@@ -73,43 +73,35 @@ const Login = () => {
         <form action="" onSubmit={formik.handleSubmit}>
           <CustomInput
             type="text"
-            label="Email Address"
-            id="email"
-            name="email"
-            onChng={formik.handleChange("email")}
-            onBlr={formik.handleBlur("email")}
-            val={formik.values.email}
+            label="OTP"
+            id="OTP"
+            name="otp"
+            onChng={formik.handleChange("otp")}
+            onBlr={formik.handleBlur("otp")}
+            val={formik.values.otp}
           />
           <div className="error mt-2">
-            {formik.touched.email && formik.errors.email}
-          </div>
-          <CustomInput
-            type="password"
-            label="Password"
-            id="pass"
-            name="password"
-            onChng={formik.handleChange("password")}
-            onBlr={formik.handleBlur("password")}
-            val={formik.values.password}
-          />
-          <div className="error mt-2">
-            {formik.touched.password && formik.errors.password}
+            {formik.touched.otp && formik.errors.otp}
           </div>
           <div className="mb-3 text-end">
-            <Link to="forgot-password" className="">
-              Forgot Password?
+            <Link onClick={resendOTP} disabled={isLoading || isLoadingResend}>
+              {isLoadingResend ? (
+                <div className="loading-text">Resending OTP</div>
+              ) : (
+                "Resend OTP"
+              )}
             </Link>
           </div>
           <button
             className="border-0 px-3 py-2 text-white fw-bold w-100 text-center text-decoration-none fs-5"
             style={{ background: "#ffd333" }}
             type="submit"
-            disabled={isLoading} // Disable the button while loading
+            disabled={isLoading || isLoadingResend}
           >
             {isLoading ? (
-              <div className="loading-text">Logging in</div>
-            ) : (
-              "Login"
+              <div className="loading-text">Verifying OTP</div>
+            ):(
+              "Verify OTP"
             )}
           </button>
         </form>
@@ -118,4 +110,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgetPasswordVerify;

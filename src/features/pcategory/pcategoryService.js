@@ -8,31 +8,34 @@ const getProductCategories = async () => {
   return response.data;
 };
 const createCategory = async (category) => {
-  const response = await axios.post(`${base_url}category/`, category, config);
+  const request = config();
+  const response = await axios.post(`${base_url}category/`, category, request);
 
   return response.data;
 };
 
 const getProductCategory = async (id) => {
-  const response = await axios.get(`${base_url}category/${id}`, config);
+  const request = config();
+  const response = await axios.get(`${base_url}category/${id}`, request);
 
   return response.data;
 };
 
 const deleteProductCategory = async (id) => {
-  const response = await axios.delete(`${base_url}category/${id}`, config);
+  const request = config();
+  const response = await axios.delete(`${base_url}category/${id}`, request);
 
   return response.data;
 };
 
 
 const updateProductCategory = async (category) => {
+  const request = config();
   try {
-    console.log(category)
     const response = await axios.put(
       `${base_url}category/${category._id}`,
       { title: category.title },
-      config
+      request
     );
     return response.data;
   } catch (error) {
